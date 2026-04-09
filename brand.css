@@ -1,0 +1,14 @@
+/* Trevolution brand tokens — extracted from Trevolution_Guidebook_2025.pdf */
+:root {
+  --tv-black: #10131A;
+  --tv-yellow: #FFD03F;
+  --tv-yellow-deep: #FFA200;
+  --tv-yellow-light: #FFD400;
+  --tv-white: #FFFFFF;
+  --tv-grey: #9DA0A6;
+  --tv-cool-grey: #F3F5F8;
+  --tv-grey-light: #E1E4EB;
+  --tv-grad-yellow: linear-gradient(135deg, #FFA200 0%, #FFD400 100%);
+  --tv-grad-grey: linear-gradient(135deg, #E1E4EB 0%, #9DA0A6 100%);
+  --tv-font: -apple-system, "Helvetica Neue", Arial, sans-serif;
+}

@@ -1,0 +1,3699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https://api.sketchfab.com https://media.sketchfab.com; media-src 'self' blob:; frame-src 'none'; object-src 'none'; base-uri 'self';">
+<title>Trevolution — RIX JBC 5F Virtual Tour</title>
+<link rel="stylesheet" href="brand.css?v=1775693342">
+<style>
+  html, body { margin:0; height:100%; background:var(--tv-black); font-family:var(--tv-font); color:var(--tv-white); overflow:hidden; }
+  #layout { position:absolute; inset:0; display:flex; }
+  #sidebar {
+    width:260px; flex-shrink:0; background:rgba(16,19,26,.92);
+    border-right:1px solid rgba(255,255,255,.08);
+    display:flex; flex-direction:column; z-index:5;
+  }
+  #sidebar-head {
+    padding:14px 16px 10px; border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  #sidebar-head .label {
+    font-size:10px; letter-spacing:1.2px; text-transform:uppercase;
+    color:var(--tv-grey); font-weight:700;
+  }
+  #sidebar-head .count { color:var(--tv-yellow); margin-left:6px; }
+  #sidebar-actions {
+    display:flex; gap:6px; margin-top:10px;
+  }
+  #sidebar-actions button {
+    flex:1; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
+    color:var(--tv-white); padding:6px 8px; border-radius:6px;
+    font:600 11px var(--tv-font); cursor:pointer;
+  }
+  #sidebar-actions button:hover { background:rgba(255,208,63,.15); border-color:var(--tv-yellow); }
+  #scene-list {
+    flex:1; overflow-y:auto; padding:6px 8px;
+  }
+  #scene-list::-webkit-scrollbar { width:8px; }
+  #scene-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,.15); border-radius:4px; }
+  .scene-item {
+    display:flex; align-items:center; gap:10px;
+    padding:8px 10px; border-radius:8px; cursor:pointer;
+    margin-bottom:3px; border:1px solid transparent;
+    transition:background .15s;
+  }
+  .scene-item:hover { background:rgba(255,255,255,.05); }
+  .scene-item.active {
+    background:rgba(255,208,63,.12); border-color:var(--tv-yellow);
+  }
+  .scene-item .num {
+    width:26px; height:26px; border-radius:6px; flex-shrink:0;
+    background:rgba(255,255,255,.08); color:var(--tv-grey);
+    display:flex; align-items:center; justify-content:center;
+    font:700 11px var(--tv-font);
+  }
+  .scene-item.active .num { background:var(--tv-yellow); color:var(--tv-black); }
+  .scene-item .name {
+    flex:1; font:600 13px var(--tv-font); color:var(--tv-white);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .scene-item .name[contenteditable="true"] {
+    outline:2px solid var(--tv-yellow); outline-offset:2px;
+    background:var(--tv-black); padding:2px 4px; border-radius:3px;
+  }
+  .scene-item .edit-btn {
+    opacity:0; background:none; border:none; color:var(--tv-grey);
+    cursor:pointer; font-size:12px; padding:2px 4px;
+  }
+  .scene-item:hover .edit-btn { opacity:1; }
+  .scene-item .edit-btn:hover { color:var(--tv-yellow); }
+
+  #viewer-wrap { flex:1; position:relative; }
+  #pano { position:absolute; inset:0; cursor:grab; }
+  #pano:active { cursor:grabbing; }
+
+  /* Top bar */
+  #topbar {
+    position:absolute; top:0; left:0; right:0; padding:14px 20px;
+    background:linear-gradient(180deg, rgba(16,19,26,.85) 0%, rgba(16,19,26,0) 100%);
+    display:flex; align-items:center; gap:16px; z-index:10; pointer-events:none;
+  }
+  .logo {
+    background:var(--tv-yellow); color:var(--tv-black);
+    padding:4px 10px 4px 8px; border-radius:6px;
+    font-weight:800; letter-spacing:-.3px; font-size:18px;
+    pointer-events:auto;
+  }
+  .logo span { color:var(--tv-black); }
+  .logo .light { background:transparent; color:var(--tv-white); padding-left:4px; }
+  #title { font-size:14px; font-weight:600; color:var(--tv-white); opacity:.9; }
+  #scene-name {
+    margin-left:auto; padding:6px 14px; background:rgba(255,208,63,.12);
+    border:1px solid var(--tv-yellow); border-radius:20px;
+    font-size:12px; color:var(--tv-yellow); font-weight:600;
+    pointer-events:auto;
+  }
+
+  /* Bottom centre picker */
+  #picker {
+    position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
+    display:flex; gap:8px; padding:8px 10px; background:rgba(16,19,26,.75);
+    backdrop-filter:blur(12px); border-radius:14px; align-items:center;
+    border:1px solid rgba(255,255,255,.08); z-index:10;
+  }
+  #picker button {
+    background:transparent; border:1px solid rgba(255,255,255,.15); color:var(--tv-white);
+    width:40px; height:36px; border-radius:8px; cursor:pointer; font-family:var(--tv-font);
+    font-size:16px; font-weight:700; transition:all .2s;
+  }
+  #picker button:hover { background:rgba(255,208,63,.15); border-color:var(--tv-yellow); }
+  #picker button.primary {
+    background:var(--tv-yellow); color:var(--tv-black); border-color:var(--tv-yellow);
+    width:auto; padding:0 14px; font-size:11px; letter-spacing:.3px;
+  }
+  #picker button.primary:hover { filter:brightness(1.1); }
+  #counter { font-size:12px; color:var(--tv-grey); font-weight:600; min-width:58px; text-align:center; }
+
+  /* Hotspots */
+  .hotspot {
+    position:absolute; transform:translate(-50%,-50%); pointer-events:auto;
+    width:48px; height:48px; border-radius:50%;
+    background:var(--tv-yellow); color:var(--tv-black);
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px; font-weight:bold; cursor:pointer;
+    box-shadow:0 4px 16px rgba(0,0,0,.4), 0 0 0 4px rgba(255,208,63,.25);
+    transition:transform .2s;
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  .hotspot:hover { transform:translate(-50%,-50%) scale(1.15); }
+  @keyframes pulse {
+    0%,100% { box-shadow:0 4px 16px rgba(0,0,0,.4), 0 0 0 4px rgba(255,208,63,.25); }
+    50%     { box-shadow:0 4px 16px rgba(0,0,0,.4), 0 0 0 12px rgba(255,208,63,.05); }
+  }
+  .hotspot-label {
+    position:absolute; top:54px; left:50%; transform:translateX(-50%);
+    background:var(--tv-black); color:var(--tv-white);
+    padding:4px 10px; border-radius:6px; font-size:12px; font-weight:600;
+    white-space:nowrap; opacity:0; transition:opacity .2s;
+  }
+  .hotspot:hover .hotspot-label { opacity:1; }
+
+  /* Splash */
+  #splash {
+    position:absolute; inset:0; background:var(--tv-black);
+    display:flex; align-items:center; justify-content:center; z-index:100;
+    transition:opacity .6s; flex-direction:column; gap:20px;
+  }
+  #splash.hidden { opacity:0; pointer-events:none; }
+  .spinner {
+    width:48px; height:48px; border:3px solid rgba(255,208,63,.2);
+    border-top-color:var(--tv-yellow); border-radius:50%;
+    animation:spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  #splash .tagline { font-size:13px; color:var(--tv-grey); letter-spacing:1px; }
+
+  /* Furniture toggle */
+  #fx-toggle {
+    position:absolute; top:70px; right:20px; z-index:10;
+    background:rgba(16,19,26,.7); backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.1); border-radius:10px;
+    padding:10px 14px; color:var(--tv-white); cursor:pointer;
+    font-family:var(--tv-font); font-size:12px; font-weight:600;
+  }
+  #fx-toggle:hover { border-color:var(--tv-yellow); }
+  #fx-toggle .dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--tv-yellow); margin-right:6px; vertical-align:middle; }
+
+  /* Furniture modal */
+  #furn-modal {
+    position:fixed; inset:0; background:rgba(0,0,0,.72); z-index:9000;
+    display:flex; align-items:center; justify-content:center;
+  }
+  #furn-modal.hidden { display:none; }
+  #furn-modal .furn-box {
+    background:var(--tv-black); border:1px solid var(--tv-yellow);
+    border-radius:12px; width:min(680px,96vw); max-height:82vh;
+    display:flex; flex-direction:column; box-shadow:0 12px 48px rgba(0,0,0,.7);
+    font-family:var(--tv-font);
+  }
+  #furn-modal .furn-head {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 20px; border-bottom:1px solid rgba(255,208,63,.2);
+  }
+  #furn-modal .furn-head h2 { margin:0; font-size:16px; color:var(--tv-yellow); font-weight:700; }
+  #furn-close {
+    background:none; border:1px solid rgba(255,255,255,.2); color:var(--tv-white);
+    border-radius:6px; padding:4px 10px; cursor:pointer; font-size:14px;
+  }
+  #furn-close:hover { border-color:var(--tv-yellow); color:var(--tv-yellow); }
+  #furn-modal .tabs {
+    display:flex; gap:4px; padding:12px 20px 0;
+  }
+  #furn-modal .tab {
+    background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);
+    color:var(--tv-white); border-radius:6px 6px 0 0; padding:7px 16px;
+    cursor:pointer; font:600 12px var(--tv-font); transition:background .15s;
+  }
+  #furn-modal .tab.active {
+    background:var(--tv-yellow); color:var(--tv-black); border-color:var(--tv-yellow);
+  }
+  #furn-modal .furn-body { flex:1; overflow-y:auto; padding:16px 20px; }
+  #furn-catalog-grid {
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px;
+    margin-bottom:12px;
+  }
+  #furn-catalog-grid .card, #furn-sf-grid .card {
+    background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1);
+    border-radius:8px; padding:12px; text-align:center; cursor:default;
+  }
+  #furn-catalog-grid .card:hover, #furn-sf-grid .card:hover {
+    border-color:var(--tv-yellow);
+  }
+  #furn-catalog-grid .card .thumb, #furn-sf-grid .card .thumb {
+    font-size:32px; margin-bottom:6px; line-height:1;
+  }
+  #furn-catalog-grid .card .thumb img, #furn-sf-grid .card .thumb img {
+    width:100%; aspect-ratio:1; object-fit:cover; border-radius:4px;
+  }
+  #furn-catalog-grid .card .nm, #furn-sf-grid .card .nm {
+    font:600 12px var(--tv-font); color:var(--tv-white); margin-bottom:2px;
+  }
+  #furn-catalog-grid .card .sub, #furn-sf-grid .card .sub {
+    font-size:10px; color:var(--tv-grey); margin-bottom:8px;
+  }
+  #furn-catalog-grid .card button, #furn-sf-grid .card button {
+    background:var(--tv-yellow); color:var(--tv-black); border:none;
+    border-radius:5px; padding:5px 12px; font:700 11px var(--tv-font); cursor:pointer;
+  }
+  #furn-catalog-grid .card button:hover, #furn-sf-grid .card button:hover {
+    background:var(--tv-yellow-deep);
+  }
+  #furn-token-row { margin-bottom:10px; }
+  .token-row { font-size:12px; color:var(--tv-grey); display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .token-row input {
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+    border-radius:5px; color:var(--tv-white); padding:5px 8px; font-size:12px; flex:1; min-width:160px;
+  }
+  .token-row button {
+    background:transparent; border:1px solid var(--tv-yellow); color:var(--tv-yellow);
+    border-radius:5px; padding:5px 10px; font:600 11px var(--tv-font); cursor:pointer;
+  }
+  .token-row button:hover { background:var(--tv-yellow); color:var(--tv-black); }
+  #furn-sf-search { display:flex; gap:8px; margin-bottom:12px; }
+  #furn-sf-q {
+    flex:1; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+    border-radius:6px; color:var(--tv-white); padding:7px 10px; font-size:13px;
+  }
+  #furn-sf-go {
+    background:var(--tv-yellow); color:var(--tv-black); border:none;
+    border-radius:6px; padding:7px 16px; font:700 12px var(--tv-font); cursor:pointer;
+  }
+  #furn-sf-go:hover { background:var(--tv-yellow-deep); }
+  #furn-sf-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px; }
+
+  /* Toast */
+  #calibrate-overlay {
+    position:absolute; inset:0; z-index:60; pointer-events:none;
+  }
+  #calibrate-overlay.hidden { display:none; }
+  #calibrate-overlay .cal-msg {
+    position:absolute; top:80px; left:50%; transform:translateX(-50%);
+    background:rgba(0,0,0,0.82); color:var(--tv-yellow);
+    border:1px solid var(--tv-yellow); border-radius:8px;
+    padding:12px 18px; font-size:13px; pointer-events:auto;
+    font-family:inherit; text-align:center; min-width:340px;
+  }
+  #calibrate-overlay .cal-step { color:#fff; margin-top:6px; font-size:12px; }
+  #calibrate-overlay button {
+    margin-top:10px; background:transparent; color:var(--tv-yellow);
+    border:1px solid var(--tv-yellow); border-radius:4px;
+    padding:4px 12px; cursor:pointer; font-family:inherit; font-size:11px;
+  }
+  #calibrate-overlay button:hover { background:var(--tv-yellow); color:var(--tv-black); }
+  body.calibrating #viewer-wrap, body.calibrating #minimap { cursor:crosshair; }
+  .cal-marker {
+    position:absolute; width:22px; height:22px; border-radius:50%;
+    background:var(--tv-yellow); color:var(--tv-black);
+    border:2px solid #000; font-weight:700; font-size:12px;
+    display:flex; align-items:center; justify-content:center;
+    transform:translate(-50%,-50%); pointer-events:none; z-index:55;
+    box-shadow:0 0 6px rgba(0,0,0,0.6);
+  }
+  #toast {
+    position:absolute; top:70px; left:50%; transform:translateX(-50%);
+    background:var(--tv-yellow); color:var(--tv-black);
+    padding:10px 18px; border-radius:8px; font:700 12px var(--tv-font);
+    opacity:0; transition:opacity .3s; z-index:20; pointer-events:none;
+  }
+  #toast.show { opacity:1; }
+
+  /* Hotspot drag mode */
+  .hotspot.draggable { cursor:grab; outline:2px dashed var(--tv-yellow); outline-offset:4px; }
+  .hotspot.dragging { cursor:grabbing; opacity:.7; animation:none; }
+
+  /* Auth gate */
+  #auth {
+    position:fixed; inset:0; background:rgba(16,19,26,.96);
+    backdrop-filter:blur(10px); z-index:200;
+    display:flex; align-items:center; justify-content:center;
+  }
+  #auth.hidden { display:none; }
+  #auth .box {
+    background:var(--tv-black); border:1px solid rgba(255,208,63,.3);
+    padding:32px 36px; border-radius:14px; width:320px;
+    box-shadow:0 20px 60px rgba(0,0,0,.6);
+  }
+  #auth .logo { font-size:22px; display:inline-block; margin-bottom:20px; }
+  #auth h2 { margin:0 0 4px; font-size:18px; font-weight:700; }
+  #auth .sub { font-size:12px; color:var(--tv-grey); margin-bottom:20px; }
+  #auth label { display:block; font:600 10px var(--tv-font); letter-spacing:1px;
+    text-transform:uppercase; color:var(--tv-grey); margin:12px 0 6px; }
+  #auth input {
+    width:100%; box-sizing:border-box; padding:10px 12px;
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.15);
+    border-radius:8px; color:var(--tv-white); font:600 14px var(--tv-font);
+  }
+  #auth input:focus { outline:none; border-color:var(--tv-yellow); }
+  #auth .row { display:flex; gap:8px; margin-top:20px; }
+  #auth .row button {
+    flex:1; padding:11px; border-radius:8px; border:none; cursor:pointer;
+    font:700 13px var(--tv-font);
+  }
+  #auth .primary { background:var(--tv-yellow); color:var(--tv-black); }
+  #auth .ghost { background:transparent; color:var(--tv-white); border:1px solid rgba(255,255,255,.2); }
+  #auth .err { color:#ff6b6b; font-size:11px; font-weight:600; margin-top:10px; min-height:14px; }
+
+  /* Admin indicator / lock button */
+  #admin-bar {
+    position:absolute; top:70px; right:170px; left:280px; z-index:10;
+    display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;
+  }
+  #admin-bar button {
+    background:rgba(16,19,26,.7); backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.1); border-radius:10px;
+    padding:10px 14px; color:var(--tv-white); cursor:pointer;
+    font:600 12px var(--tv-font);
+    white-space:nowrap;
+  }
+  #admin-bar button:hover { border-color:var(--tv-yellow); }
+  #admin-bar .active {
+    background:var(--tv-yellow); color:var(--tv-black); border-color:var(--tv-yellow);
+  }
+  @media (max-width: 1380px) {
+    #admin-bar button { padding:7px 10px; font-size:11px; border-radius:8px; }
+  }
+  @media (max-width: 1024px) {
+    #admin-bar { left:10px; right:10px; top:60px; gap:4px; }
+    #admin-bar button { padding:5px 8px; font-size:10px; }
+  }
+
+  /* Compass overlay */
+  #compass {
+    position:absolute; top:0px; right:20px; z-index:10;
+    width:60px; height:60px; border-radius:50%;
+    background:rgba(16,19,26,.7); backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.12);
+    pointer-events:none;
+  }
+  #compass .mark {
+    position:absolute; left:50%; top:6px; transform:translateX(-50%);
+    font:700 9px var(--tv-font); color:var(--tv-grey); letter-spacing:.5px;
+  }
+  #compass .mark.n { color:var(--tv-yellow); }
+  #compass .mark.e { top:50%; left:auto; right:5px; transform:translateY(-50%); }
+  #compass .mark.s { top:auto; bottom:5px; }
+  #compass .mark.w { top:50%; left:5px; transform:translateY(-50%); }
+  #compass .needle {
+    position:absolute; left:50%; top:50%;
+    width:2px; height:22px; margin-left:-1px; margin-top:-22px;
+    background:var(--tv-yellow); transform-origin:bottom center;
+    border-radius:2px;
+    box-shadow:0 0 6px rgba(255,208,63,.6);
+  }
+
+  /* Viewer-only mode: hide edit affordances */
+  body.viewer-only #sidebar-actions,
+  body.viewer-only .edit-btn,
+  body.viewer-only #set-view-btn,
+  body.viewer-only #admin-bar #hs-edit-btn,
+  body.viewer-only #admin-bar #save-version-btn,
+  body.viewer-only #admin-bar #draw3d-btn,
+  body.viewer-only #admin-bar #tours-btn,
+  body.viewer-only #admin-bar #analytics-btn,
+  body.viewer-only #admin-bar #furniture-btn,
+  body.viewer-only #admin-bar #place-dots-btn { display:none !important; }
+  body.dot-place-mode #minimap-inner { cursor: crosshair !important; }
+  body.dot-place-mode #minimap-inner .map-dot { pointer-events: none; }
+  body.draw3d-mode #pano, body.draw3d-mode #viewer-wrap { cursor: crosshair !important; }
+  .draw3d-vertex {
+    position: absolute; width: 10px; height: 10px; margin-left:-5px; margin-top:-5px;
+    background: var(--tv-yellow); border: 2px solid #000; border-radius: 50%;
+    pointer-events: none; z-index: 50; box-shadow: 0 0 4px rgba(0,0,0,.6);
+  }
+  #draw3d-overlay {
+    position:absolute; left:50%; top:60px; transform:translateX(-50%);
+    background: rgba(0,0,0,.78); color:#fff; padding:8px 14px; border-radius:8px;
+    font-size:12px; z-index:60; display:flex; gap:10px; align-items:center;
+    border:1px solid var(--tv-yellow);
+  }
+  #draw3d-overlay button {
+    background:var(--tv-yellow); color:#000; border:none; padding:5px 10px;
+    border-radius:4px; cursor:pointer; font-weight:bold; font-size:11px;
+  }
+  #draw3d-overlay button.ghost { background:transparent; color:#fff; border:1px solid #fff; }
+
+  /* ===== Guided Tours (Wave C) ===== */
+  #tours-modal { position:fixed; inset:0; background:rgba(0,0,0,.78); backdrop-filter:blur(8px); z-index:200; display:flex; align-items:center; justify-content:center; }
+  #tours-modal.hidden { display:none; }
+  #tours-modal .box { width:min(820px,94vw); max-height:86vh; background:#10131a; border:1px solid var(--tv-yellow); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; }
+  #tours-modal .head { display:flex; align-items:center; padding:14px 18px; border-bottom:1px solid rgba(255,255,255,.08); gap:12px; }
+  #tours-modal .head h2 { margin:0; font:700 16px var(--tv-font); color:var(--tv-yellow); flex:1; }
+  #tours-modal .tabs { display:flex; gap:6px; }
+  #tours-modal .tabs button { background:rgba(255,255,255,.06); color:var(--tv-white); border:1px solid rgba(255,255,255,.12); padding:6px 14px; border-radius:6px; font:600 12px var(--tv-font); cursor:pointer; }
+  #tours-modal .tabs button.active { background:var(--tv-yellow); color:var(--tv-black); border-color:var(--tv-yellow); }
+  #tours-modal .close { background:transparent; color:var(--tv-white); border:1px solid rgba(255,255,255,.2); width:30px; height:30px; border-radius:6px; cursor:pointer; font-size:16px; }
+  #tours-modal .body { padding:14px 18px; overflow-y:auto; flex:1; }
+  #tours-modal .body button { font-family:var(--tv-font); }
+  #tours-modal .row { display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap; }
+  #tours-modal .row input[type=text], #tours-modal .row input[type=number], #tours-modal input.tname, #tours-modal textarea {
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.15); color:var(--tv-white);
+    padding:6px 10px; border-radius:6px; font:600 12px var(--tv-font);
+  }
+  #tours-modal input.tname { flex:1; min-width:200px; font-size:14px; }
+  #tours-modal .btn { background:rgba(255,255,255,.08); color:var(--tv-white); border:1px solid rgba(255,255,255,.15); padding:6px 12px; border-radius:6px; font:600 11px var(--tv-font); cursor:pointer; }
+  #tours-modal .btn:hover { border-color:var(--tv-yellow); }
+  #tours-modal .btn.primary { background:var(--tv-yellow); color:var(--tv-black); border-color:var(--tv-yellow); }
+  #tours-modal .btn.danger { color:#ff8a8a; }
+  #tours-modal .tour-list { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+  #tours-modal .tour-list .titem { display:flex; align-items:center; gap:8px; padding:8px 10px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:8px; }
+  #tours-modal .tour-list .titem.active { border-color:var(--tv-yellow); background:rgba(255,208,63,.08); }
+  #tours-modal .tour-list .titem .nm { flex:1; font:600 13px var(--tv-font); color:var(--tv-white); }
+  #tours-modal .step { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:10px 12px; margin-bottom:8px; }
+  #tours-modal .step .top { display:flex; gap:8px; align-items:center; margin-bottom:6px; }
+  #tours-modal .step .top .idx { background:var(--tv-yellow); color:var(--tv-black); width:24px; height:24px; border-radius:6px; display:flex; align-items:center; justify-content:center; font:700 12px var(--tv-font); }
+  #tours-modal .step .top .scn { flex:1; font:600 12px var(--tv-font); color:var(--tv-yellow); }
+  #tours-modal .step .meta { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+  #tours-modal .step .meta input { flex:1; min-width:120px; }
+  #tours-modal .step .choices { margin-top:8px; padding-top:8px; border-top:1px dashed rgba(255,255,255,.1); }
+  #tours-modal .step .choices .ch { display:flex; gap:6px; margin-bottom:4px; }
+  #tours-modal .step .choices input.lbl { flex:1; }
+  #tours-modal .step .choices input.nxt { width:70px; }
+  #tours-modal .empty { color:var(--tv-grey); text-align:center; padding:30px; font-size:13px; }
+
+  /* ===== Tour playback overlay ===== */
+  body.tour-playing #sidebar, body.tour-playing #picker, body.tour-playing #admin-bar,
+  body.tour-playing #minimap, body.tour-playing #topbar, body.tour-playing #compass,
+  body.tour-playing #fx-toggle { display:none !important; }
+  #tour-overlay { position:fixed; left:0; right:0; bottom:0; padding:20px 24px 26px; z-index:150;
+    background:linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.6) 70%, rgba(0,0,0,0) 100%);
+    backdrop-filter:blur(6px); display:flex; flex-direction:column; gap:14px; }
+  #tour-overlay.hidden { display:none; }
+  #tour-overlay .top { display:flex; align-items:center; gap:14px; }
+  #tour-overlay .dots { display:flex; gap:6px; flex:1; flex-wrap:wrap; }
+  #tour-overlay .dots .d { width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,.25); }
+  #tour-overlay .dots .d.done { background:rgba(255,208,63,.55); }
+  #tour-overlay .dots .d.cur { background:var(--tv-yellow); box-shadow:0 0 8px var(--tv-yellow); }
+  #tour-overlay .ctrls { display:flex; gap:8px; }
+  #tour-overlay .ctrls button { background:rgba(255,255,255,.1); color:var(--tv-white); border:1px solid rgba(255,255,255,.25); padding:8px 14px; border-radius:8px; font:700 12px var(--tv-font); cursor:pointer; }
+  #tour-overlay .ctrls button:hover { border-color:var(--tv-yellow); color:var(--tv-yellow); }
+  #tour-overlay .caption { font:600 18px var(--tv-font); color:var(--tv-white); max-width:900px; margin:0 auto; text-align:center; line-height:1.4; }
+  #tour-overlay .choices { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  #tour-overlay .choices button { background:var(--tv-yellow); color:var(--tv-black); border:none; padding:14px 22px; border-radius:10px; font:700 14px var(--tv-font); cursor:pointer; min-width:180px; max-width:300px; box-shadow:0 4px 14px rgba(255,208,63,.3); }
+  #tour-overlay .choices button:hover { transform:translateY(-2px); }
+  #tour-complete { position:fixed; inset:0; background:rgba(0,0,0,.92); display:flex; align-items:center; justify-content:center; z-index:160; }
+  #tour-complete.hidden { display:none; }
+  #tour-complete .msg { font:700 28px var(--tv-font); color:var(--tv-yellow); text-align:center; }
+  #tour-complete .sub { font:600 13px var(--tv-font); color:var(--tv-grey); margin-top:8px; text-align:center; }
+  body.viewer-only .scene-item .name[contenteditable="true"] { outline:none; background:transparent; }
+
+  /* Minimap */
+  #minimap {
+    position:absolute; right:20px; bottom:20px; z-index:15;
+    width:280px; height:200px;
+    background:rgba(16,19,26,.85); backdrop-filter:blur(12px);
+    border:1px solid var(--tv-yellow); border-radius:12px;
+    box-shadow:0 8px 32px rgba(0,0,0,.5);
+    overflow:hidden;
+    transition:width .25s, height .25s, border-radius .25s;
+  }
+  #minimap.collapsed {
+    width:40px; height:40px; border-radius:50%; cursor:pointer;
+    background:var(--tv-yellow);
+  }
+  #minimap.collapsed #minimap-inner,
+  #minimap.collapsed #minimap-close { display:none; }
+  #minimap.collapsed::after {
+    content:'\25F3'; position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--tv-black); font-size:20px; font-weight:bold;
+  }
+  #minimap-close {
+    position:absolute; top:4px; right:6px; z-index:2;
+    width:20px; height:20px; line-height:18px; text-align:center;
+    color:var(--tv-white); cursor:pointer; font-size:14px;
+    background:rgba(0,0,0,.4); border-radius:50%;
+  }
+  #minimap-close:hover { background:var(--tv-yellow); color:var(--tv-black); }
+  #minimap-inner {
+    position:absolute; inset:0;
+  }
+  #minimap-inner img {
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:contain; pointer-events:none;
+    filter:invert(1) brightness(1.15) contrast(1.25);
+    transform-origin:center center;
+    transition:transform .1s ease-out;
+  }
+  /* Map Editor full-screen modal */
+  #map-editor {
+    position:fixed; inset:0; background:rgba(0,0,0,.92); z-index:9999;
+    display:flex; flex-direction:column; color:#eee; font:13px var(--tv-font);
+  }
+  #map-editor.hidden { display:none; }
+  #map-editor .me-head {
+    display:flex; align-items:center; gap:16px;
+    padding:10px 16px; background:rgba(16,19,26,.95);
+    border-bottom:1px solid var(--tv-yellow);
+  }
+  #map-editor .me-head h2 { margin:0; font-size:15px; color:var(--tv-yellow); }
+  #map-editor .me-head .spacer { flex:1; }
+  #map-editor .me-head .me-stats { color:#bbb; font-size:12px; }
+  #map-editor .me-head button {
+    background:none; border:1px solid var(--tv-yellow); color:var(--tv-yellow);
+    padding:5px 12px; border-radius:4px; cursor:pointer; font:12px var(--tv-font);
+  }
+  #map-editor .me-head button:hover { background:var(--tv-yellow); color:#000; }
+  #map-editor .me-body { flex:1; display:flex; overflow:hidden; }
+  #map-editor .me-sidebar {
+    width:240px; background:rgba(16,19,26,.85); border-right:1px solid rgba(255,255,255,.1);
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+  #map-editor .me-current {
+    padding:10px; border-bottom:1px solid rgba(255,255,255,.1);
+  }
+  #map-editor .me-current img {
+    width:100%; height:90px; object-fit:cover; border-radius:4px;
+    background:#222; display:block;
+  }
+  #map-editor .me-current .nm { font-weight:700; color:var(--tv-yellow); margin-top:6px; }
+  #map-editor .me-current .st { font-size:11px; color:#999; }
+  #map-editor .me-nav { display:flex; gap:6px; padding:8px 10px; }
+  #map-editor .me-nav button {
+    flex:1; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.15);
+    color:#eee; padding:6px; border-radius:4px; cursor:pointer; font:11px var(--tv-font);
+  }
+  #map-editor .me-nav button:hover { background:var(--tv-yellow); color:#000; border-color:var(--tv-yellow); }
+  #map-editor .me-scene-list {
+    flex:1; overflow-y:auto; padding:4px 0;
+  }
+  #map-editor .me-scene-list .item {
+    display:flex; align-items:center; gap:8px;
+    padding:5px 10px; cursor:pointer; font-size:11px;
+    border-left:2px solid transparent;
+  }
+  #map-editor .me-scene-list .item:hover { background:rgba(255,255,255,.05); }
+  #map-editor .me-scene-list .item.current {
+    background:rgba(255,208,63,.15); border-left-color:var(--tv-yellow);
+    color:var(--tv-yellow); font-weight:700;
+  }
+  #map-editor .me-scene-list .dot {
+    width:8px; height:8px; border-radius:50%; flex-shrink:0;
+    background:#444; border:1px solid #666;
+  }
+  #map-editor .me-scene-list .item.placed .dot { background:var(--tv-yellow); border-color:var(--tv-yellow); }
+  #map-editor .me-canvas-wrap { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+  #map-editor .me-toolbar {
+    padding:8px 12px; background:rgba(16,19,26,.7);
+    border-bottom:1px solid rgba(255,255,255,.1);
+    display:flex; gap:6px; align-items:center;
+  }
+  #map-editor .me-toolbar button {
+    background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.15);
+    color:#eee; padding:4px 10px; border-radius:4px; cursor:pointer;
+    font:12px var(--tv-font); min-width:30px;
+  }
+  #map-editor .me-toolbar button:hover { background:var(--tv-yellow); color:#000; border-color:var(--tv-yellow); }
+  #map-editor .me-toolbar button.danger { border-color:#ff5252; color:#ff5252; }
+  #map-editor .me-toolbar button.danger:hover { background:#ff5252; color:#fff; }
+  #map-editor .me-toolbar .sep { width:1px; height:18px; background:rgba(255,255,255,.15); }
+  #map-editor .me-toolbar .coords { margin-left:auto; font-size:11px; color:#999; }
+  #map-editor .me-canvas {
+    flex:1; position:relative; overflow:hidden;
+    background:#0a0e1a; cursor:crosshair;
+  }
+  #map-editor .me-canvas .pan-layer {
+    position:absolute; left:50%; top:50%;
+    transform-origin:0 0;
+    will-change:transform;
+  }
+  #map-editor .me-canvas img {
+    display:block; pointer-events:none;
+    filter:invert(1) brightness(1.15) contrast(1.25);
+    user-select:none; -webkit-user-drag:none;
+  }
+  #map-editor .me-canvas .me-dot {
+    position:absolute; width:14px; height:14px; border-radius:50%;
+    background:rgba(255,208,63,.6); border:2px solid #000;
+    transform:translate(-50%,-50%); cursor:grab;
+    display:flex; align-items:center; justify-content:center;
+    font-size:9px; font-weight:700; color:#000;
+    box-shadow:0 2px 6px rgba(0,0,0,.6);
+  }
+  #map-editor .me-canvas .me-dot:hover { transform:translate(-50%,-50%) scale(1.3); }
+  #map-editor .me-canvas .me-dot.current {
+    background:var(--tv-yellow); border-color:#fff;
+    width:18px; height:18px; z-index:10;
+    box-shadow:0 0 0 3px rgba(255,208,63,.35), 0 2px 6px rgba(0,0,0,.6);
+  }
+  #map-editor .me-canvas .me-dot.dragging { cursor:grabbing; }
+
+  /* Adjust Plan mode removed — deprecated in favor of Map Editor */
+
+  /* Scene Editor wizard (guided 4-step) */
+  #scene-editor-banner {
+    position:fixed; top:0; left:0; right:0; z-index:9998;
+    background:rgba(16,19,26,.96); color:var(--tv-yellow);
+    border-bottom:2px solid var(--tv-yellow);
+    padding:12px 20px;
+    display:flex; align-items:center; gap:20px;
+    font:13px var(--tv-font);
+    box-shadow:0 4px 20px rgba(0,0,0,.6);
+  }
+  #scene-editor-banner.hidden { display:none; }
+  #scene-editor-banner .se-steps {
+    display:flex; gap:6px; align-items:center;
+  }
+  #scene-editor-banner .se-step {
+    width:24px; height:24px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    border:1.5px solid rgba(255,208,63,.4);
+    color:rgba(255,208,63,.6); font-weight:700; font-size:11px;
+  }
+  #scene-editor-banner .se-step.current {
+    background:var(--tv-yellow); color:#000;
+    border-color:var(--tv-yellow);
+    box-shadow:0 0 0 3px rgba(255,208,63,.25);
+  }
+  #scene-editor-banner .se-step.done {
+    background:rgba(255,208,63,.3); color:var(--tv-yellow);
+    border-color:var(--tv-yellow);
+  }
+  #scene-editor-banner .se-title { font-weight:700; color:var(--tv-yellow); white-space:nowrap; }
+  #scene-editor-banner .se-desc { color:#ddd; flex:1; min-width:0; }
+  #scene-editor-banner .se-btns { display:flex; gap:8px; }
+  #scene-editor-banner button {
+    background:none; border:1px solid var(--tv-yellow);
+    color:var(--tv-yellow); padding:6px 14px;
+    border-radius:5px; cursor:pointer; font:inherit; font-weight:600;
+  }
+  #scene-editor-banner button:hover { background:var(--tv-yellow); color:#000; }
+  #scene-editor-banner #se-next {
+    background:var(--tv-yellow); color:#000;
+  }
+  #scene-editor-banner #se-next:hover { filter:brightness(1.1); }
+  body.se-active #minimap { outline:2px dashed rgba(255,208,63,.5); }
+  body.se-step-map #minimap { outline:3px solid var(--tv-yellow); cursor:crosshair; }
+  body.se-step-map #minimap-inner { cursor:crosshair; }
+  body.se-step-view #viewer-wrap { outline:2px solid rgba(255,208,63,.6); outline-offset:-2px; }
+  body.se-step-hotspots #viewer-wrap { cursor:crosshair; outline:2px solid rgba(255,208,63,.6); outline-offset:-2px; }
+  .map-dot {
+    position:absolute; width:10px; height:10px; border-radius:50%;
+    background:rgba(255,208,63,.75); border:1.5px solid #000;
+    transform:translate(-50%,-50%); cursor:pointer;
+    transition:transform .15s, background .15s;
+    box-shadow:0 1px 3px rgba(0,0,0,.6);
+  }
+  .map-dot:hover { transform:translate(-50%,-50%) scale(1.3); }
+  .map-dot.active {
+    width:14px; height:14px;
+    background:var(--tv-yellow);
+    border-color:#fff;
+    box-shadow:0 0 0 4px rgba(255,208,63,.35), 0 2px 6px rgba(0,0,0,.6);
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  .map-dot.unplaced {
+    background:rgba(180,180,180,.55);
+    border-color:#444;
+    width:7px; height:7px;
+  }
+  .map-dot.unplaced:hover { background:rgba(255,208,63,.7); }
+  .map-dot-label {
+    position:absolute; bottom:14px; left:50%; transform:translateX(-50%);
+    background:var(--tv-black); color:var(--tv-white);
+    padding:3px 8px; border-radius:5px; font:600 11px var(--tv-font);
+    white-space:nowrap; opacity:0; pointer-events:none;
+    transition:opacity .15s;
+  }
+  .map-dot:hover .map-dot-label { opacity:1; }
+</style>
+</head>
+<body>
+
+<div id="layout">
+  <aside id="sidebar">
+    <div id="sidebar-head">
+      <div class="label">Scenes<span class="count" id="sidebar-count">0</span></div>
+      <div id="sidebar-actions">
+        <button id="export-btn" title="Download edited scenes.json">Export</button>
+        <button id="reset-btn" title="Reset all edits">Reset</button>
+      </div>
+    </div>
+    <div id="scene-list"></div>
+  </aside>
+
+  <div id="viewer-wrap">
+    <div id="pano"></div>
+
+    <div id="topbar">
+      <div class="logo">Tr<span>Ev</span><span class="light">olution</span></div>
+      <div id="title">RIX JBC 5F · Virtual Tour</div>
+      <div id="scene-name">—</div>
+    </div>
+
+    <div id="admin-bar">
+      <button id="auto-rotate-btn" class="active" title="Toggle auto-rotate when idle">↻ AUTO</button>
+      <button id="floorplan3d-btn" title="Toggle 3D floor plan overlay">🏛 3D Plan</button>
+      <button id="hs-edit-btn" title="Drag hotspots to reposition">✎ Edit Hotspots</button>
+      <button id="save-version-btn" title="Snapshot current state as a version">💾 Save Version</button>
+      <button id="tours-btn" title="Guided Tours editor & player">🎬 Tours</button>
+      <button id="calibrate-btn" title="Calibrate photo↔plan heading">🧭 Calibrate</button>
+      <button id="measure-btn" title="Measure distance between two points">📏 Measure</button>
+      <button id="ba-btn" title="Before / After split-screen comparison">⇔ Before/After</button>
+      <button id="scene-editor-btn" title="Guided editor for the current scene: location → start view → hotspots → name">✨ Edit Scene</button>
+      <button id="place-dots-btn" title="Click minimap to set each scene's map position">📍 Place Dots</button>
+      <button id="map-editor-btn" title="Open full-screen Map Editor">🗺️ Map Editor</button>
+      <button id="draw3d-btn" title="Draw a 2D polygon and extrude to 3D">✏️ Draw 3D</button>
+      <button id="analytics-btn" title="View tour analytics">📊 Analytics</button>
+      <button id="furniture-btn" title="Add furniture to scene">🪑 Furniture</button>
+      <button id="lock-btn" title="Lock / logout">🔒 Lock</button>
+    </div>
+    <div id="analytics-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:none;align-items:center;justify-content:center;">
+      <div style="background:#111;color:#eee;border:1px solid var(--tv-yellow);border-radius:10px;padding:20px;max-width:520px;width:92%;font:13px system-ui,sans-serif;box-shadow:0 8px 40px rgba(0,0,0,0.6);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <strong style="color:var(--tv-yellow);font-size:15px;">📊 Tour Analytics</strong>
+          <button id="analytics-close" style="background:none;border:1px solid var(--tv-yellow);color:var(--tv-yellow);border-radius:4px;padding:2px 8px;cursor:pointer;">✕</button>
+        </div>
+        <div id="analytics-summary" style="margin-bottom:10px;"></div>
+        <div style="margin-bottom:6px;color:var(--tv-yellow);font-weight:600;">Top 5 visited scenes</div>
+        <ol id="analytics-top" style="margin:0 0 12px 18px;padding:0;"></ol>
+        <div style="margin-bottom:6px;color:var(--tv-yellow);font-weight:600;">View heatmap (current scene)</div>
+        <canvas id="analytics-heatmap" width="200" height="100" style="width:100%;max-width:400px;height:auto;border:1px solid #333;background:#111;display:block;margin-bottom:12px;image-rendering:pixelated;"></canvas>
+        <div style="display:flex;gap:8px;">
+          <button id="analytics-export" style="flex:1;background:var(--tv-yellow);color:#000;border:none;border-radius:4px;padding:8px;cursor:pointer;font-weight:600;">Export CSV</button>
+          <button id="analytics-clear" style="flex:1;background:none;color:var(--tv-yellow);border:1px solid var(--tv-yellow);border-radius:4px;padding:8px;cursor:pointer;">Clear Log</button>
+        </div>
+      </div>
+    </div>
+    <div id="calibrate-overlay" class="hidden">
+      <div class="cal-msg">
+        <strong>Calibrate heading</strong>
+        <div class="cal-step">Step <span id="cal-step">1</span>/2 — <span id="cal-instr">Click a recognizable point in the 360 photo.</span></div>
+        <button id="cal-cancel">Cancel</button>
+      </div>
+    </div>
+    <div id="compass">
+      <div class="mark n">N</div>
+      <div class="mark e">E</div>
+      <div class="mark s">S</div>
+      <div class="mark w">W</div>
+      <div class="needle" id="compass-needle"></div>
+    </div>
+    <button id="fx-toggle"><span class="dot"></span>3D Furniture: ON</button>
+
+    <div id="picker">
+      <button id="prev-btn" title="Previous (←)">‹</button>
+      <button id="set-view-btn" class="primary" title="Save current direction as scene start">SET START VIEW</button>
+      <button id="next-btn" title="Next (→)">›</button>
+      <button id="gyro-btn" title="Toggle gyroscope view" style="display:none; width:auto; padding:0 10px; font-size:11px;">📱 Gyro</button>
+      <span id="counter">— / —</span>
+    </div>
+
+    <div id="toast"></div>
+
+    <div id="minimap">
+      <div id="minimap-close" title="Collapse">&times;</div>
+      <div id="minimap-inner">
+        <img src="floorplan-minimap.svg" alt="Floor plan" id="minimap-img">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="scene-editor-banner" class="hidden">
+  <div class="se-steps">
+    <div class="se-step" data-step="1">1</div>
+    <div class="se-step" data-step="2">2</div>
+    <div class="se-step" data-step="3">3</div>
+    <div class="se-step" data-step="4">4</div>
+  </div>
+  <div class="se-title" id="se-step-title">—</div>
+  <div class="se-desc" id="se-step-desc">—</div>
+  <div class="se-btns">
+    <button id="se-cancel" title="Discard changes and exit">✕ Cancel</button>
+    <button id="se-next" title="Advance to next step">Next →</button>
+  </div>
+</div>
+
+<div id="map-editor" class="hidden">
+  <div class="me-head">
+    <h2>🗺️ Map Editor</h2>
+    <div class="me-stats">Placed: <span id="me-placed">0</span> / <span id="me-total">0</span></div>
+    <div class="spacer"></div>
+    <button id="me-close">✕ Close</button>
+  </div>
+  <div class="me-body">
+    <div class="me-sidebar">
+      <div class="me-current">
+        <img id="me-thumb" alt="">
+        <div class="nm" id="me-scene-name">—</div>
+        <div class="st" id="me-scene-status">—</div>
+      </div>
+      <div class="me-nav">
+        <button id="me-prev">‹ Prev</button>
+        <button id="me-next">Next ›</button>
+      </div>
+      <div class="me-scene-list" id="me-scene-list"></div>
+    </div>
+    <div class="me-canvas-wrap">
+      <div class="me-toolbar">
+        <button id="me-zoom-out" title="Zoom out (-)">−</button>
+        <button id="me-zoom-in" title="Zoom in (+)">+</button>
+        <button id="me-fit" title="Fit to view">Fit</button>
+        <div class="sep"></div>
+        <button id="me-clear-current" class="danger" title="Clear position for current scene">✕ Clear current</button>
+        <button id="me-clear-all" class="danger" title="Clear ALL positions">🗑 Clear all</button>
+        <div class="coords" id="me-coords">hover the map</div>
+      </div>
+      <div class="me-canvas" id="me-canvas">
+        <div class="pan-layer" id="me-pan-layer">
+          <img src="floorplan-minimap.svg?v=1775693342" id="me-map-img" alt="Floor plan">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="furn-modal" class="hidden">
+  <div class="furn-box">
+    <div class="furn-head">
+      <h2>🪑 Add Furniture</h2>
+      <div style="display:flex;gap:8px;">
+        <button id="furn-clear" style="background:none;border:1px solid #ff5252;color:#ff5252;border-radius:4px;padding:4px 10px;cursor:pointer;" title="Delete all furniture in this scene">🗑 Clear Scene</button>
+        <button id="furn-close">✕ Close</button>
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="catalog">Catalog</button>
+      <button class="tab" data-tab="sketchfab">Sketchfab</button>
+    </div>
+    <div class="furn-body">
+      <div id="furn-tab-catalog">
+        <div id="furn-catalog-grid"></div>
+      </div>
+      <div id="furn-tab-sketchfab" style="display:none;">
+        <div id="furn-token-row"></div>
+        <div id="furn-sf-search">
+          <input id="furn-sf-q" type="text" placeholder="Search Sketchfab (e.g. office chair)">
+          <button id="furn-sf-go">Search</button>
+        </div>
+        <div id="furn-sf-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="auth" class="hidden">
+  <div class="box">
+    <div class="logo">Tr<span>Ev</span><span class="light">olution</span></div>
+    <h2>Admin Access</h2>
+    <div class="sub">Sign in to edit scenes and save versions</div>
+    <label>Username</label>
+    <input id="auth-user" type="text" autocomplete="off" autocapitalize="off">
+    <label>Password</label>
+    <input id="auth-pass" type="password">
+    <div class="err" id="auth-err"></div>
+    <div class="row">
+      <button class="ghost" id="auth-cancel">View only</button>
+      <button class="primary" id="auth-ok">Sign in</button>
+    </div>
+  </div>
+</div>
+
+<div id="tours-modal" class="hidden">
+  <div class="box">
+    <div class="head">
+      <h2>🎬 Guided Tours</h2>
+      <div class="tabs">
+        <button id="tours-tab-edit" class="active">Edit</button>
+        <button id="tours-tab-play">Play</button>
+      </div>
+      <button class="close" id="tours-close">×</button>
+    </div>
+    <div class="body" id="tours-body"></div>
+  </div>
+</div>
+
+<div id="tour-overlay" class="hidden">
+  <div class="top">
+    <div class="dots" id="tour-dots"></div>
+    <div class="ctrls">
+      <button id="tour-skip">Skip ▶</button>
+      <button id="tour-exit">✕ Exit</button>
+    </div>
+  </div>
+  <div class="caption" id="tour-caption">—</div>
+  <div class="choices" id="tour-choices"></div>
+</div>
+
+<div id="tour-complete" class="hidden">
+  <div>
+    <div class="msg">Tour complete</div>
+    <div class="sub">TRAVEL EVOLVED</div>
+  </div>
+</div>
+
+<div id="splash">
+  <div class="logo" style="font-size:28px; padding:8px 16px;">Tr<span>Ev</span><span class="light">olution</span></div>
+  <div class="spinner"></div>
+  <div class="tagline">TRAVEL EVOLVED</div>
+</div>
+
+<script
+  src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"
+  integrity="sha384-eWPGgBROV7OvRpuavxpzaTSoHT/gkcVjZ94JzXW7WDFZB9qEb4Q9k+8bfx/c1rTM"
+  crossorigin="anonymous"
+  onerror="console.error('[three.js] CDN load failed')"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/three@0.150.1/examples/js/webxr/VRButton.js"
+  integrity="sha384-zoM/JnXJ864ks3rveHZTt+d4H8GkvtPGJhdEAwVAIH2QHE/oYI1nLRQPmn/uw/au"
+  crossorigin="anonymous"
+  onerror="console.warn('[XR] VRButton CDN unavailable, using inline fallback')"></script>
+<script src="furniture.js?v=1775693342"></script>
+<script src="analytics.js?v=1775693342"></script>
+<script src="floorplan-3d.js?v=1775693342"></script>
+<script src="webxr.js?v=1775693342"></script>
+<script>
+// ============================================================================
+// Trevolution Office Tour — viewer + sidebar + editable scenes
+// ============================================================================
+
+const STORAGE_KEY = 'trevolution_tour_edits_v1';
+const VERSIONS_KEY = 'trevolution_tour_versions_v1';
+const AUTH_KEY = 'trevolution_tour_auth_v1';
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'admin';
+
+// ============================================================================
+// Auth gate — admin/admin unlocks edit mode. Viewing is always allowed.
+// ============================================================================
+let isAdmin = sessionStorage.getItem(AUTH_KEY) === '1';
+// Admin mode mutex: only one editing mode active at a time.
+// Values: null | 'place' | 'calibrate' | 'draw3d' | 'mapedit' | 'measure' | 'ba' | 'hotspot'
+let currentAdminMode = null;
+function tryEnterAdminMode(mode) {
+  if (currentAdminMode && currentAdminMode !== mode) {
+    if (typeof toast === 'function') toast(`${currentAdminMode} mode is active — exit it first`);
+    return false;
+  }
+  currentAdminMode = mode;
+  return true;
+}
+function exitAdminMode(mode) {
+  if (currentAdminMode === mode) currentAdminMode = null;
+}
+
+function showAuth() {
+  document.getElementById('auth').classList.remove('hidden');
+  document.getElementById('auth-user').value = '';
+  document.getElementById('auth-pass').value = '';
+  document.getElementById('auth-err').textContent = '';
+  setTimeout(() => document.getElementById('auth-user').focus(), 50);
+}
+function hideAuth() {
+  document.getElementById('auth').classList.add('hidden');
+}
+function applyAuthMode() {
+  document.body.classList.toggle('viewer-only', !isAdmin);
+  const lockBtn = document.getElementById('lock-btn');
+  if (lockBtn) lockBtn.textContent = isAdmin ? '🔒 Lock' : '🔓 Sign in';
+}
+function setupAuth() {
+  document.getElementById('auth-ok').addEventListener('click', tryLogin);
+  document.getElementById('auth-cancel').addEventListener('click', () => {
+    isAdmin = false;
+    sessionStorage.removeItem(AUTH_KEY);
+    applyAuthMode();
+    hideAuth();
+  });
+  document.getElementById('auth-pass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') tryLogin();
+  });
+  document.getElementById('auth-user').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('auth-pass').focus();
+  });
+  document.getElementById('lock-btn').addEventListener('click', () => {
+    if (isAdmin) {
+      isAdmin = false;
+      sessionStorage.removeItem(AUTH_KEY);
+      applyAuthMode();
+      toast('Locked');
+    } else {
+      showAuth();
+    }
+  });
+}
+function tryLogin() {
+  const u = document.getElementById('auth-user').value.trim();
+  const p = document.getElementById('auth-pass').value;
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    isAdmin = true;
+    sessionStorage.setItem(AUTH_KEY, '1');
+    applyAuthMode();
+    hideAuth();
+    toast('Signed in as admin');
+  } else {
+    document.getElementById('auth-err').textContent = 'Wrong username or password';
+  }
+}
+const canvas = document.getElementById('pano');
+const W = () => canvas.clientWidth;
+const H = () => canvas.clientHeight;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, W()/H(), 1, 2000);
+camera.position.set(0, 0, 0.1);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(W(), H());
+canvas.appendChild(renderer.domElement);
+
+// Wave D: WebXR init (graceful no-op if navigator.xr undefined)
+try {
+  if (window.TrevolutionXR && typeof TrevolutionXR.init === 'function') {
+    TrevolutionXR.init(renderer, scene, camera);
+  }
+} catch (e) { console.warn('[XR] init failed', e); }
+
+const sphereGeo = new THREE.SphereGeometry(500, 64, 40);
+sphereGeo.scale(-1, 1, 1);
+const sphereMat = new THREE.MeshBasicMaterial({ map: null, transparent: true, opacity: 1 });
+scene.add(new THREE.Mesh(sphereGeo, sphereMat));
+// Second sphere used as the incoming layer for cross-fade transitions
+const fadeMat = new THREE.MeshBasicMaterial({ map: null, transparent: true, opacity: 0 });
+const fadeMesh = new THREE.Mesh(sphereGeo, fadeMat);
+scene.add(fadeMesh);
+
+// Deep-dispose of all geometries + materials under a group to prevent VRAM leak
+function disposeGroup(g) {
+  if (!g) return;
+  g.traverse(obj => {
+    if (obj.geometry && typeof obj.geometry.dispose === 'function') obj.geometry.dispose();
+    const m = obj.material;
+    if (Array.isArray(m)) m.forEach(x => x && x.dispose && x.dispose());
+    else if (m && typeof m.dispose === 'function') m.dispose();
+  });
+}
+let furnitureGroup = new THREE.Group();
+scene.add(furnitureGroup);
+let furnitureVisible = true;
+
+// --- Floorplan 3D overlay (Wave B) ---------------------------------------
+let floorplanGroup = null;
+let floorplanLoaded = false;
+let floorplanVisible = false;
+// Lights for MeshStandardMaterial used by the floor plan overlay
+scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+const _fpDirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+_fpDirLight.position.set(1, 1, 1);
+scene.add(_fpDirLight);
+
+function toggleFloorplan3D() {
+  const btn = document.getElementById('floorplan3d-btn');
+  if (!floorplanLoaded) {
+    fetch('floorplan.svg')
+      .then(r => r.text())
+      .then(svgText => {
+        try {
+          const parsed = Floorplan3D.parse(svgText);
+          console.log('[Floorplan3D] paths total=' + parsed.total + ' kept=' + parsed.kept);
+          floorplanGroup = Floorplan3D.buildMesh(parsed, { height: 270 });
+          const s = 0.3;
+          floorplanGroup.scale.set(s, s, s);
+          floorplanGroup.rotation.set(-Math.PI / 2, 0, 0);
+          floorplanGroup.position.set(-595 * s, -120, -420 * s);
+          floorplanGroup.visible = true;
+          floorplanVisible = true;
+          scene.add(floorplanGroup);
+          floorplanLoaded = true;
+          if (btn) btn.classList.add('active');
+          if (typeof toast === 'function') toast('3D plan: ' + floorplanGroup.userData.stats.built + ' walls');
+        } catch (e) {
+          console.error('[Floorplan3D] parse/build failed', e);
+          if (typeof toast === 'function') toast('3D plan failed to load');
+          if (btn) btn.classList.remove('active');
+        }
+      })
+      .catch(err => {
+        console.error('[Floorplan3D] fetch failed', err);
+        if (typeof toast === 'function') toast('3D plan: cannot load SVG');
+      });
+    return;
+  }
+  floorplanVisible = !floorplanVisible;
+  if (floorplanGroup) floorplanGroup.visible = floorplanVisible;
+  if (btn) btn.classList.toggle('active', floorplanVisible);
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('floorplan3d-btn');
+  if (btn) btn.addEventListener('click', toggleFloorplan3D);
+});
+
+// Camera controls
+let lon = 0, lat = 0, isDown = false, downX = 0, downY = 0, downLon = 0, downLat = 0;
+canvas.addEventListener('mousedown', e => { isDown = true; downX = e.clientX; downY = e.clientY; downLon = lon; downLat = lat; });
+window.addEventListener('mousemove', e => {
+  if (!isDown) return;
+  lon = downLon - (e.clientX - downX) * 0.1;
+  lat = Math.max(-85, Math.min(85, downLat + (e.clientY - downY) * 0.1));
+});
+window.addEventListener('mouseup', () => isDown = false);
+canvas.addEventListener('wheel', e => {
+  camera.fov = Math.max(30, Math.min(100, camera.fov + e.deltaY * 0.05));
+  camera.updateProjectionMatrix();
+}, { passive: true });
+canvas.addEventListener('touchstart', e => { const t = e.touches[0]; isDown = true; downX = t.clientX; downY = t.clientY; downLon = lon; downLat = lat; });
+canvas.addEventListener('touchmove', e => {
+  if (!isDown) return;
+  const t = e.touches[0];
+  lon = downLon - (t.clientX - downX) * 0.1;
+  lat = Math.max(-85, Math.min(85, downLat + (t.clientY - downY) * 0.1));
+  e.preventDefault();
+}, { passive: false });
+canvas.addEventListener('touchend', () => isDown = false);
+
+window.addEventListener('resize', fitRenderer);
+function fitRenderer() {
+  camera.aspect = W()/H();
+  camera.updateProjectionMatrix();
+  renderer.setSize(W(), H());
+}
+
+// Hotspots
+const hotspotEls = []; // { el, yawRad, pitchRad, sceneId, hsIdx, onClick }
+let hotspotEditMode = false;
+
+function clearHotspots() {
+  hotspotEls.forEach(h => {
+    // Detach window listeners to prevent accumulation across scene changes
+    if (h._onMove) window.removeEventListener('mousemove', h._onMove);
+    if (h._onUp)   window.removeEventListener('mouseup',   h._onUp);
+    h.el.remove();
+  });
+  hotspotEls.length = 0;
+}
+
+function addHotspot(yawDeg, pitchDeg, label, onClick, sceneId, hsIdx) {
+  const el = document.createElement('div');
+  el.className = 'hotspot';
+  el.innerHTML = `→<div class="hotspot-label">${label}</div>`;
+  document.getElementById('viewer-wrap').appendChild(el);
+  const rec = {
+    el,
+    yawRad: yawDeg * Math.PI / 180,
+    pitchRad: pitchDeg * Math.PI / 180,
+    sceneId, hsIdx, onClick
+  };
+  hotspotEls.push(rec);
+  attachHotspotHandlers(rec);
+  if (hotspotEditMode) el.classList.add('draggable');
+}
+
+function attachHotspotHandlers(rec) {
+  let dragging = false, moved = false;
+  rec.el.addEventListener('mousedown', e => {
+    if (!hotspotEditMode) return;
+    e.stopPropagation();
+    dragging = true; moved = false;
+    rec.el.classList.add('dragging');
+  });
+  // Store refs so clearHotspots can detach — prevents window-listener accumulation
+  rec._onMove = e => {
+    if (!dragging) return;
+    moved = true;
+    const { yawDeg, pitchDeg } = screenToYawPitch(e.clientX, e.clientY);
+    rec.yawRad = yawDeg * Math.PI / 180;
+    rec.pitchRad = pitchDeg * Math.PI / 180;
+  };
+  rec._onUp = () => {
+    if (!dragging) return;
+    dragging = false;
+    rec.el.classList.remove('dragging');
+    if (moved) {
+      const yaw = Math.round((rec.yawRad * 180 / Math.PI) * 10) / 10;
+      const pitch = Math.round((rec.pitchRad * 180 / Math.PI) * 10) / 10;
+      const s = scenesData[currentSceneIdx];
+      s.hotspots[rec.hsIdx].yaw = yaw;
+      s.hotspots[rec.hsIdx].pitch = pitch;
+      editHotspot(s.id, rec.hsIdx, yaw, pitch);
+      toast(`Hotspot saved: yaw ${yaw}°, pitch ${pitch}°`);
+    }
+  };
+  window.addEventListener('mousemove', rec._onMove);
+  window.addEventListener('mouseup',   rec._onUp);
+  rec.el.addEventListener('click', e => {
+    if (hotspotEditMode) { e.stopPropagation(); return; }
+    rec.onClick();
+  });
+}
+
+// Convert screen coords back to yaw/pitch via raycast onto the sphere
+const raycaster = new THREE.Raycaster();
+function screenToYawPitch(clientX, clientY) {
+  const rect = canvas.getBoundingClientRect();
+  const nx = ((clientX - rect.left) / rect.width) * 2 - 1;
+  const ny = -((clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera({ x: nx, y: ny }, camera);
+  const dir = raycaster.ray.direction.clone().normalize();
+  // dir = (sin(phi)*cos(theta), cos(phi), sin(phi)*sin(theta)), with lon=theta in deg
+  const pitchDeg = Math.asin(dir.y) * 180 / Math.PI;
+  const yawDeg = Math.atan2(dir.x, dir.z) * 180 / Math.PI;
+  return { yawDeg, pitchDeg };
+}
+function updateHotspots() {
+  const wrap = document.getElementById('viewer-wrap');
+  const rect = wrap.getBoundingClientRect();
+  hotspotEls.forEach(({ el, yawRad, pitchRad }) => {
+    const r = 400;
+    const x = r * Math.cos(pitchRad) * Math.sin(yawRad);
+    const y = r * Math.sin(pitchRad);
+    const z = r * Math.cos(pitchRad) * Math.cos(yawRad);
+    const v = new THREE.Vector3(x, y, z).project(camera);
+    if (v.z > 1) { el.style.display = 'none'; return; }
+    el.style.display = 'block';
+    el.style.left = ((v.x + 1) / 2 * rect.width) + 'px';
+    el.style.top  = ((-v.y + 1) / 2 * rect.height) + 'px';
+  });
+}
+
+// ============================================================================
+// Persistent edits (localStorage, since file:// can't write scenes.json)
+// ============================================================================
+function loadEdits() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch { return {}; }
+}
+function saveEdits(edits) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(edits));
+}
+function applyEdits(scenes) {
+  const edits = loadEdits();
+  scenes.forEach(s => {
+    const e = edits[s.id];
+    if (!e) return;
+    if (e.name !== undefined) s.name = e.name;
+    if (e.headingOffset !== undefined) s.headingOffset = e.headingOffset;
+    if (e.initialYaw !== undefined) s.initialYaw = e.initialYaw;
+    if (e.initialPitch !== undefined) s.initialPitch = e.initialPitch;
+    if (e.drawnShapes !== undefined) s.drawnShapes = e.drawnShapes;
+    if (e.mapPos !== undefined) s.mapPos = e.mapPos;
+    if (e.hotspots !== undefined) {
+      // Patch hotspot yaw/pitch by index
+      e.hotspots.forEach((h, i) => {
+        if (s.hotspots[i]) {
+          if (h.yaw !== undefined)   s.hotspots[i].yaw   = h.yaw;
+          if (h.pitch !== undefined) s.hotspots[i].pitch = h.pitch;
+        }
+      });
+    }
+  });
+}
+function editHotspot(sceneId, hsIdx, yaw, pitch) {
+  const edits = loadEdits();
+  edits[sceneId] = edits[sceneId] || {};
+  edits[sceneId].hotspots = edits[sceneId].hotspots || [];
+  edits[sceneId].hotspots[hsIdx] = { yaw, pitch };
+  saveEdits(edits);
+}
+function editScene(id, patch) {
+  const edits = loadEdits();
+  edits[id] = { ...(edits[id] || {}), ...patch };
+  saveEdits(edits);
+}
+
+// ============================================================================
+// Scene loading
+// ============================================================================
+let scenesData = [];
+let currentSceneIdx = 0;
+
+async function loadConfig() {
+  const res = await fetch('scenes.json');
+  scenesData = (await res.json()).scenes;
+  applyEdits(scenesData);
+  buildSidebar();
+  wirePicker();
+  setupAuth();
+  applyAuthMode();
+  try { TrevolutionAnalytics.start(); } catch(e) {}
+  await loadScene(0);
+  document.getElementById('splash').classList.add('hidden');
+  // Wave D: provide hotspot list to XR module
+  try {
+    if (window.TrevolutionXR && typeof TrevolutionXR.setHotspotProvider === 'function') {
+      TrevolutionXR.setHotspotProvider(function () { return hotspotEls; });
+    }
+  } catch (e) { console.warn('[XR] setHotspotProvider failed', e); }
+  // Wave D: wire admin-bar VR button
+  try {
+    var vrAdminBtn = document.getElementById('xr-vr-btn');
+    if (vrAdminBtn) {
+      if (!navigator.xr) {
+        vrAdminBtn.style.display = 'none';
+      } else {
+        vrAdminBtn.addEventListener('click', function () {
+          var b = window.TrevolutionXR && TrevolutionXR.getVRButton && TrevolutionXR.getVRButton();
+          if (b) b.click();
+        });
+      }
+    }
+  } catch (e) { console.warn('[XR] admin VR button wire failed', e); }
+}
+
+// --- Sidebar -----------------------------------------------------------------
+function buildSidebar() {
+  const list = document.getElementById('scene-list');
+  list.innerHTML = '';
+  document.getElementById('sidebar-count').textContent = ` · ${scenesData.length}`;
+
+  scenesData.forEach((s, i) => {
+    const item = document.createElement('div');
+    item.className = 'scene-item';
+    item.dataset.idx = i;
+    item.innerHTML = `
+      <div class="num">${i + 1}</div>
+      <div class="name" data-idx="${i}">${escapeHtml(s.name)}</div>
+      <button class="edit-btn" title="Rename">✎</button>
+    `;
+
+    item.addEventListener('click', e => {
+      if (e.target.classList.contains('edit-btn')) return;
+      if (e.target.classList.contains('name') && e.target.isContentEditable) return;
+      loadScene(i);
+    });
+
+    const nameEl = item.querySelector('.name');
+    const editBtn = item.querySelector('.edit-btn');
+
+    editBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      if (!isAdmin) { showAuth(); return; }
+      beginRename(nameEl, i);
+    });
+    nameEl.addEventListener('dblclick', e => {
+      e.stopPropagation();
+      if (!isAdmin) { showAuth(); return; }
+      beginRename(nameEl, i);
+    });
+
+    list.appendChild(item);
+  });
+}
+
+function beginRename(nameEl, idx) {
+  nameEl.contentEditable = 'true';
+  nameEl.focus();
+  const range = document.createRange();
+  range.selectNodeContents(nameEl);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+
+  const commit = () => {
+    nameEl.contentEditable = 'false';
+    const newName = nameEl.textContent.trim() || scenesData[idx].name;
+    scenesData[idx].name = newName;
+    editScene(scenesData[idx].id, { name: newName });
+    if (idx === currentSceneIdx) {
+      document.getElementById('scene-name').textContent = newName;
+    }
+    nameEl.removeEventListener('blur', commit);
+    nameEl.removeEventListener('keydown', onKey);
+    toast(`Renamed to "${newName}"`);
+  };
+  const onKey = e => {
+    if (e.key === 'Enter') { e.preventDefault(); nameEl.blur(); }
+    if (e.key === 'Escape') { nameEl.textContent = scenesData[idx].name; nameEl.blur(); }
+  };
+  nameEl.addEventListener('blur', commit);
+  nameEl.addEventListener('keydown', onKey);
+}
+
+function updateSidebarActive(idx) {
+  document.querySelectorAll('.scene-item').forEach((el, i) =>
+    el.classList.toggle('active', i === idx));
+  const active = document.querySelector('.scene-item.active');
+  if (active) active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c =>
+    ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+// --- Picker ------------------------------------------------------------------
+function wirePicker() {
+  document.getElementById('prev-btn').addEventListener('click',
+    () => loadScene((currentSceneIdx - 1 + scenesData.length) % scenesData.length));
+  document.getElementById('next-btn').addEventListener('click',
+    () => loadScene((currentSceneIdx + 1) % scenesData.length));
+  document.getElementById('set-view-btn').addEventListener('click', saveCurrentView);
+
+  window.addEventListener('keydown', e => {
+    if (e.target.isContentEditable) return;
+    if (e.key === 'ArrowLeft')  loadScene((currentSceneIdx - 1 + scenesData.length) % scenesData.length);
+    if (e.key === 'ArrowRight') loadScene((currentSceneIdx + 1) % scenesData.length);
+  });
+
+  document.getElementById('export-btn').addEventListener('click', exportScenes);
+  document.getElementById('reset-btn').addEventListener('click', resetEdits);
+
+  // Hotspot edit mode toggle (admin only)
+  document.getElementById('hs-edit-btn').addEventListener('click', e => {
+    if (!isAdmin) { showAuth(); return; }
+    hotspotEditMode = !hotspotEditMode;
+    e.currentTarget.classList.toggle('active', hotspotEditMode);
+    hotspotEls.forEach(h => h.el.classList.toggle('draggable', hotspotEditMode));
+    toast(hotspotEditMode ? 'Drag hotspots to reposition' : 'Hotspot edit off');
+  });
+
+  // Save version (admin only)
+  document.getElementById('save-version-btn').addEventListener('click', () => {
+    if (!isAdmin) { showAuth(); return; }
+    saveVersion();
+  });
+
+  // Guard name editing + SET START VIEW behind auth
+  const setViewBtn = document.getElementById('set-view-btn');
+  const origSet = setViewBtn.onclick;
+  setViewBtn.addEventListener('click', e => {
+    if (!isAdmin) { e.stopImmediatePropagation(); showAuth(); }
+  }, true);
+}
+
+// ============================================================================
+// Versioning — named snapshots of scenesData stored in localStorage
+// ============================================================================
+function loadVersions() {
+  try { return JSON.parse(localStorage.getItem(VERSIONS_KEY)) || []; }
+  catch { return []; }
+}
+const MAX_VERSIONS = 20;
+function saveVersion() {
+  const name = prompt('Version name (e.g. "v1 reviewed 2026-04-07"):');
+  if (!name) return;
+  const versions = loadVersions();
+  versions.push({
+    name,
+    createdAt: new Date().toISOString(),
+    scenes: JSON.parse(JSON.stringify(scenesData)),
+  });
+  // LRU cap to avoid localStorage quota exhaustion
+  while (versions.length > MAX_VERSIONS) versions.shift();
+  try {
+    localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
+    toast(`Version "${name}" saved (${versions.length}/${MAX_VERSIONS})`);
+  } catch (e) {
+    console.warn('[versions] quota exceeded, dropping half', e);
+    versions.splice(0, Math.ceil(versions.length / 2));
+    try { localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions)); } catch (_) {}
+    toast(`Storage full — older versions dropped`);
+  }
+}
+
+function saveCurrentView() {
+  const s = scenesData[currentSceneIdx];
+  s.initialYaw = Math.round(lon * 10) / 10;
+  s.initialPitch = Math.round(lat * 10) / 10;
+  editScene(s.id, { initialYaw: s.initialYaw, initialPitch: s.initialPitch });
+  toast(`Start view saved: yaw ${s.initialYaw}°, pitch ${s.initialPitch}°`);
+}
+
+function exportScenes() {
+  const data = { title: 'Trevolution — RIX JBC 5F', scenes: scenesData };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'scenes.json';
+  a.click();
+  toast('scenes.json downloaded');
+}
+
+function resetEdits() {
+  if (!confirm('Reset all scene name and start-view edits?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
+// --- Scene loader ------------------------------------------------------------
+const texLoader = new THREE.TextureLoader();
+let sceneLoading = false;
+function loadScene(idx) {
+  if (sceneLoading) return Promise.resolve();
+  sceneLoading = true;
+  return new Promise(resolve => {
+    const s = scenesData[idx];
+    texLoader.load(s.image, tex => {
+      tex.colorSpace = THREE.SRGBColorSpace || tex.colorSpace;
+      // Cross-fade: load incoming texture into fadeMat, tween opacity, then commit
+      const hasPrevious = !!sphereMat.map;
+      if (hasPrevious) {
+        fadeMat.map = tex;
+        fadeMat.needsUpdate = true;
+        fadeMat.opacity = 0;
+        const start = performance.now();
+        const dur = 600;
+        const oldTex = sphereMat.map;
+        const tween = (now) => {
+          const t = Math.min(1, (now - start) / dur);
+          fadeMat.opacity = t;
+          sphereMat.opacity = 1 - t;
+          if (t < 1) {
+            requestAnimationFrame(tween);
+          } else {
+            // Commit: move tex into base, reset fade layer
+            if (oldTex) oldTex.dispose();
+            sphereMat.map = tex;
+            sphereMat.opacity = 1;
+            sphereMat.needsUpdate = true;
+            fadeMat.map = null;
+            fadeMat.opacity = 0;
+          }
+        };
+        requestAnimationFrame(tween);
+      } else {
+        sphereMat.map = tex;
+        sphereMat.opacity = 1;
+        sphereMat.needsUpdate = true;
+      }
+
+      currentSceneIdx = idx;
+      lon = s.initialYaw || 0;
+      lat = s.initialPitch || 0;
+      fitRenderer();
+      try { TrevolutionAnalytics.logSceneLoad(s.id); } catch(e) {}
+
+      document.getElementById('scene-name').textContent = s.name;
+      document.getElementById('counter').textContent = `${idx + 1} / ${scenesData.length}`;
+      updateSidebarActive(idx);
+
+      clearHotspots();
+      (s.hotspots || []).forEach((h, i) => {
+        addHotspot(h.yaw, h.pitch, h.label, () => {
+          try { TrevolutionAnalytics.logHotspotClick(s.id, i, h.target); } catch(e) {}
+          const tgtIdx = scenesData.findIndex(x => x.id === h.target);
+          if (tgtIdx >= 0) loadScene(tgtIdx);
+        }, s.id, i);
+      });
+      window.TrevolutionXR && TrevolutionXR.setHotspotProvider(() => hotspotEls);
+
+      disposeGroup(furnitureGroup);
+      scene.remove(furnitureGroup);
+      furnitureGroup = new THREE.Group();
+      (s.furniture || []).forEach(f => {
+        if (f.type === 'callCenterCluster') {
+          const c = TrevolutionFurniture.buildCallCentreCluster({ rows: f.rows, cols: f.cols });
+          c.position.set(...f.position);
+          c.rotation.set(...(f.rotation || [0,0,0]));
+          furnitureGroup.add(c);
+        }
+      });
+      furnitureGroup.visible = furnitureVisible;
+      scene.add(furnitureGroup);
+
+      rebuildDrawnObjects(s);
+
+      if (floorplanGroup && s.headingOffset !== undefined) {
+        floorplanGroup.rotation.y = s.headingOffset * Math.PI / 180;
+      }
+
+      sceneLoading = false;
+      resolve();
+    }, undefined, err => {
+      console.error('Scene load failed', s.image, err);
+      sceneLoading = false;
+      resolve();
+    });
+  });
+}
+
+// --- Toast -------------------------------------------------------------------
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// Furniture toggle
+document.getElementById('fx-toggle').addEventListener('click', e => {
+  furnitureVisible = !furnitureVisible;
+  furnitureGroup.visible = furnitureVisible;
+  e.currentTarget.innerHTML = `<span class="dot"></span>3D Furniture: ${furnitureVisible ? 'ON' : 'OFF'}`;
+});
+
+// ============================================================================
+// Idle auto-rotate
+// ============================================================================
+let autoRotateEnabled = true;
+let lastInteraction = performance.now();
+const IDLE_MS = 8000;
+function noteInteraction() { lastInteraction = performance.now(); }
+['mousedown','touchstart','keydown','wheel','click'].forEach(ev =>
+  window.addEventListener(ev, noteInteraction, { passive: true }));
+document.getElementById('auto-rotate-btn').addEventListener('click', e => {
+  autoRotateEnabled = !autoRotateEnabled;
+  e.currentTarget.classList.toggle('active', autoRotateEnabled);
+  toast(autoRotateEnabled ? 'Auto-rotate ON' : 'Auto-rotate OFF');
+  noteInteraction();
+});
+
+// ============================================================================
+// Mobile gyroscope
+// ============================================================================
+let gyroEnabled = false;
+let gyroHandler = null;
+const gyroBtn = document.getElementById('gyro-btn');
+const gyroSupported = (typeof window.DeviceOrientationEvent !== 'undefined') &&
+  ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+if (gyroSupported) gyroBtn.style.display = '';
+function enableGyro() {
+  gyroHandler = (e) => {
+    if (e.alpha == null || e.beta == null) return;
+    lon = -e.alpha;
+    lat = Math.max(-85, Math.min(85, e.beta - 90));
+  };
+  window.addEventListener('deviceorientation', gyroHandler);
+  gyroEnabled = true;
+  gyroBtn.classList.add('primary');
+  toast('Gyro ON');
+}
+function disableGyro() {
+  if (gyroHandler) window.removeEventListener('deviceorientation', gyroHandler);
+  gyroHandler = null;
+  gyroEnabled = false;
+  gyroBtn.classList.remove('primary');
+  toast('Gyro OFF');
+}
+gyroBtn.addEventListener('click', () => {
+  if (gyroEnabled) { disableGyro(); return; }
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    DeviceOrientationEvent.requestPermission().then(state => {
+      if (state === 'granted') enableGyro();
+      else toast('Gyro permission denied');
+    }).catch(() => toast('Gyro unavailable'));
+  } else {
+    enableGyro();
+  }
+});
+
+// ============================================================================
+// Compass needle
+// ============================================================================
+const compassNeedle = document.getElementById('compass-needle');
+function updateCompass() {
+  // lon increases as user drags right; needle should reflect facing direction
+  compassNeedle.style.transform = `rotate(${-lon}deg)`;
+}
+
+// Render loop (Wave D: uses setAnimationLoop for WebXR compatibility)
+function animate() {
+  if (autoRotateEnabled && !gyroEnabled && !isDown &&
+      (performance.now() - lastInteraction) > IDLE_MS) {
+    lon += 0.05;
+  }
+  const phi = (90 - lat) * Math.PI / 180;
+  const theta = lon * Math.PI / 180;
+  camera.lookAt(
+    500 * Math.sin(phi) * Math.cos(theta),
+    500 * Math.cos(phi),
+    500 * Math.sin(phi) * Math.sin(theta)
+  );
+  renderer.render(scene, camera);
+  if (typeof renderBeforeAfterOverlay === 'function') renderBeforeAfterOverlay();
+  updateHotspots();
+  updateCompass();
+  try {
+    var _cs = scenesData[currentSceneIdx];
+    if (_cs) TrevolutionAnalytics.sampleCamera(_cs.id, lon, lat);
+  } catch(e) {}
+  if (typeof updateMeasureOverlay === 'function') updateMeasureOverlay();
+}
+renderer.setAnimationLoop(animate);
+
+// --- Analytics modal --------------------------------------------------------
+(function () {
+  var modal = document.getElementById('analytics-modal');
+  var btn = document.getElementById('analytics-btn');
+  var closeBtn = document.getElementById('analytics-close');
+  var exportBtn = document.getElementById('analytics-export');
+  var clearBtn = document.getElementById('analytics-clear');
+  if (!modal || !btn) return;
+
+  function fmtMs(ms) {
+    var s = Math.round(ms / 1000);
+    if (s < 60) return s + 's';
+    var m = Math.floor(s / 60); s = s % 60;
+    return m + 'm ' + s + 's';
+  }
+
+  function refresh() {
+    var stats = TrevolutionAnalytics.getStats();
+    document.getElementById('analytics-summary').innerHTML =
+      '<div>Total events: <strong>' + stats.totalEvents + '</strong></div>' +
+      '<div>Session: <strong>' + fmtMs(stats.totalSessionMs) + '</strong></div>';
+    var ol = document.getElementById('analytics-top');
+    ol.innerHTML = '';
+    if (!stats.topScenes.length) {
+      ol.innerHTML = '<li style="list-style:none;color:#888;">No visits logged yet</li>';
+    } else {
+      stats.topScenes.forEach(function (sc) {
+        var li = document.createElement('li');
+        li.textContent = sc.id + ' \u2014 ' + sc.visits + ' visit(s), dwell ' + fmtMs(sc.totalDwell);
+        ol.appendChild(li);
+      });
+    }
+    var cs = scenesData[currentSceneIdx];
+    if (cs) TrevolutionAnalytics.renderHeatmap(document.getElementById('analytics-heatmap'), cs.id);
+  }
+
+  function open() {
+    if (!isAdmin) { if (typeof showAuth === 'function') showAuth(); return; }
+    modal.style.display = 'flex';
+    modal.classList.remove('hidden');
+    refresh();
+  }
+  function close() {
+    modal.style.display = 'none';
+    modal.classList.add('hidden');
+  }
+
+  btn.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && modal.style.display === 'flex') close();
+  });
+  exportBtn.addEventListener('click', function () {
+    TrevolutionAnalytics.exportCSV();
+    if (typeof toast === 'function') toast('Analytics CSV exported');
+  });
+  clearBtn.addEventListener('click', function () {
+    TrevolutionAnalytics.clear();
+    if (typeof toast === 'function') toast('Analytics log cleared');
+    refresh();
+  });
+})();
+
+// ============================================================================
+// Wave B — Measurement tool (2-point great-circle angular distance)
+// ============================================================================
+(function setupMeasure() {
+  const btn = document.getElementById('measure-btn');
+  if (!btn) return;
+  const wrap = document.getElementById('viewer-wrap');
+  let active = false;
+  let pointA = null, pointB = null;
+  const layer = document.createElement('div');
+  layer.id = 'measure-layer';
+  layer.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:25;';
+  wrap.appendChild(layer);
+
+  function mkDot() {
+    const d = document.createElement('div');
+    d.style.cssText = 'position:absolute;width:12px;height:12px;border-radius:50%;background:var(--tv-yellow);border:2px solid var(--tv-black);transform:translate(-50%,-50%);box-shadow:0 0 6px var(--tv-yellow);';
+    return d;
+  }
+  function mkLine() {
+    const l = document.createElement('div');
+    l.style.cssText = 'position:absolute;height:2px;background:var(--tv-yellow);transform-origin:0 50%;box-shadow:0 0 4px var(--tv-yellow);';
+    return l;
+  }
+  function mkLabel() {
+    const lab = document.createElement('div');
+    lab.style.cssText = 'position:absolute;background:var(--tv-black);color:var(--tv-yellow);border:1px solid var(--tv-yellow);border-radius:6px;padding:3px 8px;font:600 12px system-ui,sans-serif;transform:translate(-50%,-50%);white-space:nowrap;';
+    return lab;
+  }
+
+  let dotA, dotB, line, label;
+
+  function clearMarks() {
+    layer.innerHTML = '';
+    dotA = dotB = line = label = null;
+    pointA = pointB = null;
+  }
+
+  function yawPitchToScreen(yawDeg, pitchDeg) {
+    const yaw = yawDeg * Math.PI / 180;
+    const pitch = pitchDeg * Math.PI / 180;
+    const r = 400;
+    const x = r * Math.cos(pitch) * Math.sin(yaw);
+    const y = r * Math.sin(pitch);
+    const z = r * Math.cos(pitch) * Math.cos(yaw);
+    const v = new THREE.Vector3(x, y, z).project(camera);
+    if (v.z > 1) return null;
+    const rect = wrap.getBoundingClientRect();
+    return { x: (v.x + 1) / 2 * rect.width, y: (-v.y + 1) / 2 * rect.height };
+  }
+
+  window.updateMeasureOverlay = function() {
+    if (!active) return;
+    if (pointA && dotA) {
+      const p = yawPitchToScreen(pointA.yawDeg, pointA.pitchDeg);
+      if (p) { dotA.style.display = 'block'; dotA.style.left = p.x + 'px'; dotA.style.top = p.y + 'px'; }
+      else { dotA.style.display = 'none'; }
+    }
+    if (pointB && dotB) {
+      const p = yawPitchToScreen(pointB.yawDeg, pointB.pitchDeg);
+      if (p) { dotB.style.display = 'block'; dotB.style.left = p.x + 'px'; dotB.style.top = p.y + 'px'; }
+      else { dotB.style.display = 'none'; }
+    }
+    if (pointA && pointB && line && label) {
+      const a = yawPitchToScreen(pointA.yawDeg, pointA.pitchDeg);
+      const b = yawPitchToScreen(pointB.yawDeg, pointB.pitchDeg);
+      if (a && b) {
+        line.style.display = 'block';
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const len = Math.hypot(dx, dy);
+        const ang = Math.atan2(dy, dx) * 180 / Math.PI;
+        line.style.left = a.x + 'px';
+        line.style.top = a.y + 'px';
+        line.style.width = len + 'px';
+        line.style.transform = 'rotate(' + ang + 'deg)';
+        label.style.display = 'block';
+        label.style.left = ((a.x + b.x) / 2) + 'px';
+        label.style.top = ((a.y + b.y) / 2 - 18) + 'px';
+      } else {
+        line.style.display = 'none';
+        label.style.display = 'none';
+      }
+    }
+  };
+
+  function computeAndLabel() {
+    const yawA = pointA.yawDeg * Math.PI / 180;
+    const pitchA = pointA.pitchDeg * Math.PI / 180;
+    const yawB = pointB.yawDeg * Math.PI / 180;
+    const pitchB = pointB.pitchDeg * Math.PI / 180;
+    const cos = Math.sin(pitchA) * Math.sin(pitchB) + Math.cos(pitchA) * Math.cos(pitchB) * Math.cos(yawA - yawB);
+    const angleRad = Math.acos(Math.max(-1, Math.min(1, cos)));
+    const degrees = angleRad * 180 / Math.PI;
+    const s = scenesData[currentSceneIdx];
+    const sphereRadius = (s && s.sphereRadius) || 250;
+    const linearMeters = (sphereRadius * angleRad) / 100;
+    label.textContent = degrees.toFixed(1) + '° · ~' + linearMeters.toFixed(2) + 'm';
+    try { editScene(s.id, { lastMeasure: { a: pointA, b: pointB, deg: degrees, m: linearMeters } }); } catch (e) {}
+  }
+
+  function onClick(e) {
+    if (!active) return;
+    if (e.target.closest && (e.target.closest('#admin-bar') || e.target.closest('#sidebar') || e.target.closest('#picker'))) return;
+    e.stopPropagation();
+    const { yawDeg, pitchDeg } = screenToYawPitch(e.clientX, e.clientY);
+    if (!pointA) {
+      pointA = { yawDeg, pitchDeg };
+      dotA = mkDot();
+      layer.appendChild(dotA);
+    } else if (!pointB) {
+      pointB = { yawDeg, pitchDeg };
+      dotB = mkDot();
+      line = mkLine();
+      label = mkLabel();
+      layer.appendChild(line);
+      layer.appendChild(dotB);
+      layer.appendChild(label);
+      computeAndLabel();
+    } else {
+      clearMarks();
+      pointA = { yawDeg, pitchDeg };
+      dotA = mkDot();
+      layer.appendChild(dotA);
+    }
+  }
+
+  btn.addEventListener('click', () => {
+    active = !active;
+    btn.classList.toggle('active', active);
+    canvas.style.cursor = active ? 'crosshair' : '';
+    if (!active) clearMarks();
+    else toast('Measure: click two points');
+  });
+  canvas.addEventListener('click', onClick, true);
+})();
+
+// ============================================================================
+// Wave B — Before/After split-screen scene comparator
+// ============================================================================
+(function setupBeforeAfter() {
+  const btn = document.getElementById('ba-btn');
+  if (!btn) return;
+  const wrap = document.getElementById('viewer-wrap');
+
+  let active = false;
+  let awaitingPick = false;
+  let sceneAIdx = null, sceneBIdx = null;
+  let texA = null, texB = null;
+  let splitRatio = 0.5;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'ba-overlay';
+  overlay.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:24;display:none;';
+  const divider = document.createElement('div');
+  divider.style.cssText = 'position:absolute;top:0;bottom:0;width:3px;background:var(--tv-yellow);box-shadow:0 0 8px var(--tv-yellow);transform:translateX(-50%);pointer-events:auto;cursor:ew-resize;left:50%;';
+  const handle = document.createElement('div');
+  handle.style.cssText = 'position:absolute;top:50%;left:50%;width:34px;height:34px;border-radius:50%;background:var(--tv-yellow);color:var(--tv-black);border:2px solid var(--tv-black);transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;font:700 14px system-ui;cursor:ew-resize;pointer-events:auto;';
+  handle.textContent = '↔';
+  divider.appendChild(handle);
+  overlay.appendChild(divider);
+  wrap.appendChild(overlay);
+
+  function setSplit(px) {
+    const rect = wrap.getBoundingClientRect();
+    splitRatio = Math.max(0.05, Math.min(0.95, px / rect.width));
+    divider.style.left = (splitRatio * 100) + '%';
+  }
+  function onPointerDown(e) {
+    e.preventDefault();
+    const move = (ev) => {
+      const rect = wrap.getBoundingClientRect();
+      const cx = ev.touches ? ev.touches[0].clientX : ev.clientX;
+      setSplit(cx - rect.left);
+    };
+    const up = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', up);
+      window.removeEventListener('touchmove', move);
+      window.removeEventListener('touchend', up);
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+    window.addEventListener('touchmove', move, { passive: false });
+    window.addEventListener('touchend', up);
+  }
+  divider.addEventListener('mousedown', onPointerDown);
+  divider.addEventListener('touchstart', onPointerDown, { passive: false });
+
+  function loadTex(idx) {
+    return new Promise((resolve, reject) => {
+      const s = scenesData[idx];
+      texLoader.load(s.image, t => {
+        t.colorSpace = THREE.SRGBColorSpace || t.colorSpace;
+        resolve(t);
+      }, undefined, reject);
+    });
+  }
+
+  window.renderBeforeAfterOverlay = function() {
+    if (!active || !texA || !texB) return;
+    const size = renderer.getSize(new THREE.Vector2());
+    const w = size.x, h = size.y;
+    const splitPx = Math.floor(w * splitRatio);
+    const savedMap = sphereMat.map;
+    const savedAuto = renderer.autoClear;
+    renderer.autoClear = false;
+    renderer.setScissorTest(true);
+
+    renderer.setScissor(0, 0, splitPx, h);
+    renderer.setViewport(0, 0, w, h);
+    sphereMat.map = texA;
+    sphereMat.needsUpdate = true;
+    renderer.clearDepth();
+    renderer.render(scene, camera);
+
+    renderer.setScissor(splitPx, 0, w - splitPx, h);
+    sphereMat.map = texB;
+    sphereMat.needsUpdate = true;
+    renderer.clearDepth();
+    renderer.render(scene, camera);
+
+    renderer.setScissorTest(false);
+    renderer.setViewport(0, 0, w, h);
+    sphereMat.map = savedMap;
+    sphereMat.needsUpdate = true;
+    renderer.autoClear = savedAuto;
+  };
+
+  document.getElementById('scene-list').addEventListener('click', e => {
+    if (!awaitingPick) return;
+    const item = e.target.closest('.scene-item');
+    if (!item) return;
+    if (e.target.classList.contains('edit-btn')) return;
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    const idx = parseInt(item.dataset.idx, 10);
+    sceneBIdx = idx;
+    awaitingPick = false;
+    Promise.all([loadTex(sceneAIdx), loadTex(sceneBIdx)]).then(([a, b]) => {
+      texA = a; texB = b;
+      active = true;
+      overlay.style.display = 'block';
+      divider.style.left = '50%';
+      splitRatio = 0.5;
+      btn.classList.add('active');
+      toast('A: ' + scenesData[sceneAIdx].name + '  |  B: ' + scenesData[sceneBIdx].name);
+    }).catch(() => toast('Before/After: failed to load textures'));
+  }, true);
+
+  function exitBA() {
+    active = false;
+    awaitingPick = false;
+    overlay.style.display = 'none';
+    btn.classList.remove('active');
+    if (texA) { texA.dispose(); texA = null; }
+    if (texB) { texB.dispose(); texB = null; }
+    sceneAIdx = sceneBIdx = null;
+  }
+
+  btn.addEventListener('click', () => {
+    if (active || awaitingPick) { exitBA(); toast('Before/After OFF'); return; }
+    sceneAIdx = currentSceneIdx;
+    awaitingPick = true;
+    btn.classList.add('active');
+    toast('Pick the second scene from the sidebar');
+  });
+
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && (active || awaitingPick)) exitBA();
+  });
+})();
+
+// --- Minimap -----------------------------------------------------------------
+// Unplaced scenes have mapPos = {0.5, 0.5} by default. If every unplaced dot
+// sits at center they stack invisibly. Spread them across the bottom edge in
+// a grid so each is individually clickable and the user can see which are unplaced.
+function isUnplacedMapPos(mp) {
+  return !mp || (Math.abs(mp.x - 0.5) < 0.001 && Math.abs(mp.y - 0.5) < 0.001);
+}
+function buildMinimap() {
+  const inner = document.getElementById('minimap-inner');
+  // Clear any existing dots
+  inner.querySelectorAll('.map-dot').forEach(d => d.remove());
+  // Count unplaced so we can grid-layout just them
+  let unplacedCounter = 0;
+  const unplacedCols = 10; // 10 columns along the bottom edge
+  scenesData.forEach((s, i) => {
+    const mp = s.mapPos || { x: 0.5, y: 0.5 };
+    const unplaced = isUnplacedMapPos(mp);
+    const dot = document.createElement('div');
+    dot.className = 'map-dot' + (unplaced ? ' unplaced' : '');
+    dot.dataset.idx = i;
+    if (unplaced) {
+      // Grid position along the bottom edge (not saved to mapPos)
+      const col = unplacedCounter % unplacedCols;
+      const row = Math.floor(unplacedCounter / unplacedCols);
+      dot.style.left = (5 + col * 9) + '%';
+      dot.style.top  = (92 - row * 6) + '%';
+      unplacedCounter++;
+    } else {
+      dot.style.left = (mp.x * 100) + '%';
+      dot.style.top  = (mp.y * 100) + '%';
+    }
+    const lbl = document.createElement('div');
+    lbl.className = 'map-dot-label';
+    lbl.textContent = s.name;
+    dot.appendChild(lbl);
+    let dragged = false, startX = 0, startY = 0;
+    dot.addEventListener('pointerdown', e => {
+      if (!isAdmin) return;
+      e.stopPropagation();
+      e.preventDefault();
+      dragged = false;
+      startX = e.clientX; startY = e.clientY;
+      dot.setPointerCapture(e.pointerId);
+      const rect = inner.getBoundingClientRect();
+      const onMove = ev => {
+        if (!dragged && Math.hypot(ev.clientX - startX, ev.clientY - startY) < 5) return;
+        dragged = true;
+        const nx = Math.max(0, Math.min(1, (ev.clientX - rect.left) / rect.width));
+        const ny = Math.max(0, Math.min(1, (ev.clientY - rect.top) / rect.height));
+        dot.style.left = (nx * 100) + '%';
+        dot.style.top  = (ny * 100) + '%';
+        s.mapPos = { x: nx, y: ny };
+      };
+      const onUp = ev => {
+        dot.releasePointerCapture(e.pointerId);
+        dot.removeEventListener('pointermove', onMove);
+        dot.removeEventListener('pointerup', onUp);
+        dot.removeEventListener('pointercancel', onUp);
+        if (dragged) {
+          editScene(s.id, { mapPos: s.mapPos });
+          toast(`Moved "${s.name}" → (${(s.mapPos.x*100).toFixed(1)}%, ${(s.mapPos.y*100).toFixed(1)}%)`);
+        }
+      };
+      dot.addEventListener('pointermove', onMove);
+      dot.addEventListener('pointerup', onUp);
+      dot.addEventListener('pointercancel', onUp);
+    });
+    dot.addEventListener('click', e => {
+      e.stopPropagation();
+      if (dragged) { dragged = false; return; }
+      loadScene(i);
+    });
+    inner.appendChild(dot);
+  });
+  updateMinimapActive(currentSceneIdx);
+}
+function updateMinimapActive(idx) {
+  document.querySelectorAll('#minimap .map-dot').forEach(d => {
+    d.classList.toggle('active', +d.dataset.idx === idx);
+  });
+}
+// Collapse / expand
+document.getElementById('minimap-close').addEventListener('click', e => {
+  e.stopPropagation();
+  document.getElementById('minimap').classList.add('collapsed');
+});
+document.getElementById('minimap').addEventListener('click', e => {
+  const mm = document.getElementById('minimap');
+  if (mm.classList.contains('collapsed')) mm.classList.remove('collapsed');
+});
+// Patch loadScene to refresh minimap active state
+const _origLoadScene = loadScene;
+loadScene = function(idx) {
+  return _origLoadScene(idx).then(() => updateMinimapActive(idx));
+};
+
+// --- Dot placement mode ------------------------------------------------------
+(function setupDotPlace() {
+  let active = false;
+  const btn = document.getElementById('place-dots-btn');
+
+  function enter() {
+    if (!tryEnterAdminMode('place')) return;
+    active = true;
+    btn.classList.add('active');
+    document.body.classList.add('dot-place-mode');
+    toast(`Place Dots: click minimap to set position for "${scenesData[currentSceneIdx]?.name}"`);
+  }
+  function exit() {
+    active = false;
+    btn.classList.remove('active');
+    document.body.classList.remove('dot-place-mode');
+    exitAdminMode('place');
+    toast('Dot placement off');
+  }
+
+  btn.addEventListener('click', () => {
+    if (!isAdmin) { showAuth(); return; }
+    active ? exit() : enter();
+  });
+
+  document.getElementById('minimap-inner').addEventListener('click', e => {
+    if (!active) return;
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top)  / rect.height;
+    const s = scenesData[currentSceneIdx];
+    s.mapPos = { x, y };
+    editScene(s.id, { mapPos: { x, y } });
+    buildMinimap();
+    toast(`Set "${s.name}" → (${(x*100).toFixed(1)}%, ${(y*100).toFixed(1)}%)`);
+    // Advance to next scene
+    const next = (currentSceneIdx + 1) % scenesData.length;
+    loadScene(next).then(() => {
+      toast(`Place Dots: click minimap for "${scenesData[next]?.name}"`);
+    });
+  });
+
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && active) exit();
+  });
+})();
+
+
+// --- Scene Editor wizard (guided 4-step per-scene editor) -------------------
+(function setupSceneEditor() {
+  const btn = document.getElementById('scene-editor-btn');
+  const banner = document.getElementById('scene-editor-banner');
+  if (!btn || !banner) return;
+
+  const titleEl = document.getElementById('se-step-title');
+  const descEl = document.getElementById('se-step-desc');
+  const nextBtn = document.getElementById('se-next');
+  const cancelBtn = document.getElementById('se-cancel');
+  const stepDots = banner.querySelectorAll('.se-step');
+
+  // State
+  let step = 0;              // 0=idle · 1=map · 2=view · 3=hotspots · 4=name
+  let editingIdx = -1;
+  let draft = null;          // { mapPos, initialYaw, initialPitch, hotspots, name }
+  let step1Click = null, step3Click = null;
+
+  const DESCS = {
+    1: 'Click on the floor plan (bottom-right) to mark where this scene was shot.',
+    2: 'Drag the panorama to your desired opening view, then click Next →',
+    3: 'Click in the panorama to add hotspots (you\'ll be asked for a label and target scene). Click Next → when done.',
+    4: 'Give the scene a descriptive name, then click Finish ✓',
+  };
+
+  function updateBanner() {
+    if (step === 0) { banner.classList.add('hidden'); return; }
+    banner.classList.remove('hidden');
+    const s = scenesData[editingIdx];
+    titleEl.textContent = `Editing "${s?.name || '?'}" · Step ${step}/4`;
+    descEl.textContent = DESCS[step] || '';
+    nextBtn.textContent = step === 4 ? 'Finish ✓' : 'Next →';
+    stepDots.forEach(d => {
+      const n = +d.dataset.step;
+      d.classList.toggle('current', n === step);
+      d.classList.toggle('done', n < step);
+    });
+  }
+
+  function start(idx) {
+    if (!isAdmin) { showAuth(); return; }
+    if (!tryEnterAdminMode('scene-editor')) return;
+    editingIdx = idx;
+    const s = scenesData[editingIdx];
+    draft = {
+      mapPos: s.mapPos ? { x: s.mapPos.x, y: s.mapPos.y } : { x: 0.5, y: 0.5 },
+      initialYaw: s.initialYaw,
+      initialPitch: s.initialPitch,
+      hotspots: JSON.parse(JSON.stringify(s.hotspots || [])),
+      name: s.name,
+    };
+    // Make sure we're viewing the scene we're editing
+    if (currentSceneIdx !== editingIdx) loadScene(editingIdx);
+    document.body.classList.add('se-active');
+    step = 1;
+    enterStep(1);
+    updateBanner();
+    toast(`Scene Editor: Step 1 — place location on floor plan`);
+  }
+
+  function cancel() {
+    exitStep(step);
+    document.body.classList.remove('se-active');
+    step = 0;
+    editingIdx = -1;
+    draft = null;
+    exitAdminMode('scene-editor');
+    updateBanner();
+    toast('Scene Editor cancelled — no changes saved');
+    buildMinimap(); // restore any preview-only changes
+  }
+
+  function finish() {
+    const s = scenesData[editingIdx];
+    s.mapPos = draft.mapPos;
+    if (draft.initialYaw !== undefined) s.initialYaw = draft.initialYaw;
+    if (draft.initialPitch !== undefined) s.initialPitch = draft.initialPitch;
+    s.hotspots = draft.hotspots;
+    s.name = draft.name || s.name;
+    try {
+      editScene(s.id, {
+        mapPos: s.mapPos,
+        initialYaw: s.initialYaw,
+        initialPitch: s.initialPitch,
+        hotspots: s.hotspots,
+        name: s.name,
+      });
+    } catch (e) { console.warn('[scene-editor] save failed', e); }
+    // Refresh UI surfaces
+    buildMinimap();
+    const sidebarEl = document.querySelector(`.scene-item .name[data-idx="${editingIdx}"]`);
+    if (sidebarEl) sidebarEl.textContent = s.name;
+    const titleBadge = document.getElementById('scene-name');
+    if (titleBadge && editingIdx === currentSceneIdx) titleBadge.textContent = s.name;
+    // Reload the scene so hotspots + initial view are reapplied
+    loadScene(editingIdx);
+    document.body.classList.remove('se-active');
+    step = 0;
+    editingIdx = -1;
+    draft = null;
+    exitAdminMode('scene-editor');
+    updateBanner();
+    toast(`✓ Saved "${s.name}"`);
+  }
+
+  function nextStep() {
+    // Capture anything the current step holds transiently
+    if (step === 2) {
+      // Capture current viewer orientation as start view
+      draft.initialYaw = Math.round(lon * 10) / 10;
+      draft.initialPitch = Math.round(lat * 10) / 10;
+      toast(`Start view saved: yaw ${draft.initialYaw}°, pitch ${draft.initialPitch}°`);
+    }
+    exitStep(step);
+    if (step === 4) { finish(); return; }
+    step++;
+    enterStep(step);
+    updateBanner();
+  }
+
+  function enterStep(n) {
+    if (n === 1) enterStep1();
+    else if (n === 3) enterStep3();
+    else if (n === 4) enterStep4();
+    // step 2 needs no setup — user naturally drags the viewer
+  }
+  function exitStep(n) {
+    if (n === 1) exitStep1();
+    else if (n === 3) exitStep3();
+  }
+
+  // STEP 1 — click the minimap to set mapPos
+  function enterStep1() {
+    document.body.classList.add('se-step-map');
+    step1Click = function(e) {
+      const inner = document.getElementById('minimap-inner');
+      if (!inner || !inner.contains(e.target)) return;
+      e.stopPropagation();
+      e.preventDefault();
+      const rect = inner.getBoundingClientRect();
+      const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      const y = Math.max(0, Math.min(1, (e.clientY - rect.top)  / rect.height));
+      draft.mapPos = { x, y };
+      // Preview: update the scene data and re-render the minimap
+      scenesData[editingIdx].mapPos = { x, y };
+      buildMinimap();
+      toast(`Location set: (${(x*100).toFixed(1)}%, ${(y*100).toFixed(1)}%) — click Next →`);
+    };
+    document.addEventListener('click', step1Click, true);
+  }
+  function exitStep1() {
+    document.body.classList.remove('se-step-map');
+    if (step1Click) document.removeEventListener('click', step1Click, true);
+    step1Click = null;
+  }
+
+  // STEP 2 (view) — no JS needed; user drags the viewer, Next captures lon/lat
+  // Add body class for visual outline only
+  const _origEnterStep = enterStep;
+  // (handled in enterStep via body class below)
+
+  // STEP 3 — click viewer to add a hotspot
+  function enterStep3() {
+    document.body.classList.add('se-step-hotspots');
+    step3Click = function(e) {
+      const wrap = document.getElementById('viewer-wrap');
+      if (!wrap || !wrap.contains(e.target)) return;
+      if (e.target.closest('#admin-bar,#sidebar,#picker,#scene-editor-banner,#minimap,#compass,#topbar,#fx-toggle')) return;
+      e.stopPropagation();
+      e.preventDefault();
+      const { yawDeg, pitchDeg } = screenToYawPitch(e.clientX, e.clientY);
+      const label = prompt('Hotspot label (visible on hover):', 'Go →');
+      if (!label) { toast('Hotspot cancelled'); return; }
+      // Build numbered target list (short form)
+      const list = scenesData.map((x, i) => `${i+1}. ${x.name}`).join('\n');
+      const raw = prompt(
+        `Target scene number (1–${scenesData.length}):\n\n${list.length > 1200 ? list.slice(0,1200) + '\n…' : list}`,
+        String(editingIdx + 1)
+      );
+      if (raw === null) { toast('Hotspot cancelled'); return; }
+      const targetIdx = parseInt(raw, 10) - 1;
+      if (isNaN(targetIdx) || targetIdx < 0 || targetIdx >= scenesData.length) {
+        toast('Invalid target number — hotspot cancelled');
+        return;
+      }
+      draft.hotspots.push({
+        type: 'nav',
+        yaw: Math.round(yawDeg * 10) / 10,
+        pitch: Math.round(pitchDeg * 10) / 10,
+        target: scenesData[targetIdx].id,
+        label,
+      });
+      toast(`Added hotspot "${label}" → ${scenesData[targetIdx].name} (${draft.hotspots.length} total)`);
+    };
+    document.addEventListener('click', step3Click, true);
+  }
+  function exitStep3() {
+    document.body.classList.remove('se-step-hotspots');
+    if (step3Click) document.removeEventListener('click', step3Click, true);
+    step3Click = null;
+  }
+
+  // STEP 4 — name prompt
+  function enterStep4() {
+    const newName = prompt('Scene name:', draft.name);
+    if (newName && newName.trim()) draft.name = newName.trim();
+  }
+
+  // Wiring
+  btn.addEventListener('click', () => start(currentSceneIdx));
+  nextBtn.addEventListener('click', nextStep);
+  cancelBtn.addEventListener('click', cancel);
+
+  window.addEventListener('keydown', e => {
+    if (step === 0) return;
+    if (e.key === 'Escape') { e.preventDefault(); cancel(); }
+    if (e.key === 'Enter' && !e.shiftKey && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+      // Only advance when banner is focused or no input focus
+      if (document.activeElement === document.body || document.activeElement === nextBtn) {
+        e.preventDefault(); nextStep();
+      }
+    }
+  });
+})();
+
+// --- Map Editor (full-screen placement tool) --------------------------------
+(function setupMapEditor() {
+  const btn = document.getElementById('map-editor-btn');
+  const modal = document.getElementById('map-editor');
+  const canvas = document.getElementById('me-canvas');
+  const panLayer = document.getElementById('me-pan-layer');
+  const mapImg = document.getElementById('me-map-img');
+  const sceneList = document.getElementById('me-scene-list');
+  const thumbEl = document.getElementById('me-thumb');
+  const nameEl = document.getElementById('me-scene-name');
+  const statusEl = document.getElementById('me-scene-status');
+  const placedEl = document.getElementById('me-placed');
+  const totalEl = document.getElementById('me-total');
+  const coordsEl = document.getElementById('me-coords');
+  if (!btn || !modal) return;
+
+  let idx = 0;           // current scene index inside editor
+  let scale = 1;         // zoom
+  let panX = 0, panY = 0; // pan in pixels (within pan-layer coordinates)
+  let imgNatural = { w: 1190, h: 841 };
+
+  const DEFAULT_MAP = { x: 0.5, y: 0.5 };
+  const isPlaced = s => s.mapPos && !(s.mapPos.x === DEFAULT_MAP.x && s.mapPos.y === DEFAULT_MAP.y);
+
+  function updateStats() {
+    const placed = scenesData.filter(isPlaced).length;
+    placedEl.textContent = placed;
+    totalEl.textContent = scenesData.length;
+  }
+
+  function applyTransform() {
+    panLayer.style.transform = `translate(calc(-50% + ${panX}px), calc(-50% + ${panY}px)) scale(${scale})`;
+  }
+
+  function fitToView() {
+    const rect = canvas.getBoundingClientRect();
+    const sx = rect.width / imgNatural.w;
+    const sy = rect.height / imgNatural.h;
+    scale = Math.min(sx, sy) * 0.95;
+    panX = 0; panY = 0;
+    applyTransform();
+  }
+
+  function buildSceneList() {
+    sceneList.innerHTML = '';
+    scenesData.forEach((s, i) => {
+      const row = document.createElement('div');
+      row.className = 'item' + (isPlaced(s) ? ' placed' : '') + (i === idx ? ' current' : '');
+      row.innerHTML = `<span class="dot"></span><span>${s.name}</span>`;
+      row.addEventListener('click', () => { setCurrent(i); });
+      sceneList.appendChild(row);
+    });
+  }
+
+  function setCurrent(i) {
+    idx = (i + scenesData.length) % scenesData.length;
+    const s = scenesData[idx];
+    nameEl.textContent = s.name;
+    statusEl.textContent = isPlaced(s) ? 'Placed' : 'Not placed';
+    thumbEl.src = s.image;
+    buildSceneList();
+    renderDots();
+    // Auto-scroll sidebar to current
+    const cur = sceneList.querySelector('.item.current');
+    if (cur) cur.scrollIntoView({ block: 'nearest' });
+  }
+
+  function renderDots() {
+    panLayer.querySelectorAll('.me-dot').forEach(d => d.remove());
+    scenesData.forEach((s, i) => {
+      if (!isPlaced(s)) return;
+      const dot = document.createElement('div');
+      dot.className = 'me-dot' + (i === idx ? ' current' : '');
+      dot.style.left = (s.mapPos.x * imgNatural.w) + 'px';
+      dot.style.top  = (s.mapPos.y * imgNatural.h) + 'px';
+      dot.textContent = (i + 1);
+      attachDotHandlers(dot, i);
+      panLayer.appendChild(dot);
+    });
+  }
+
+  function attachDotHandlers(dot, i) {
+    let dragged = false, sx = 0, sy = 0;
+    dot.addEventListener('pointerdown', e => {
+      e.stopPropagation();
+      e.preventDefault();
+      dot.setPointerCapture(e.pointerId);
+      dot.classList.add('dragging');
+      dragged = false;
+      sx = e.clientX; sy = e.clientY;
+      const startX = scenesData[i].mapPos.x;
+      const startY = scenesData[i].mapPos.y;
+      const move = ev => {
+        const dx = (ev.clientX - sx) / (scale * imgNatural.w);
+        const dy = (ev.clientY - sy) / (scale * imgNatural.h);
+        if (!dragged && Math.hypot(ev.clientX - sx, ev.clientY - sy) < 4) return;
+        dragged = true;
+        const nx = Math.max(0, Math.min(1, startX + dx));
+        const ny = Math.max(0, Math.min(1, startY + dy));
+        scenesData[i].mapPos = { x: nx, y: ny };
+        dot.style.left = (nx * imgNatural.w) + 'px';
+        dot.style.top  = (ny * imgNatural.h) + 'px';
+      };
+      const up = ev => {
+        dot.releasePointerCapture(e.pointerId);
+        dot.classList.remove('dragging');
+        dot.removeEventListener('pointermove', move);
+        dot.removeEventListener('pointerup', up);
+        dot.removeEventListener('pointercancel', up);
+        if (dragged) {
+          editScene(scenesData[i].id, { mapPos: scenesData[i].mapPos });
+          updateStats();
+        } else {
+          setCurrent(i);
+        }
+      };
+      dot.addEventListener('pointermove', move);
+      dot.addEventListener('pointerup', up);
+      dot.addEventListener('pointercancel', up);
+    });
+  }
+
+  // Canvas click → place current scene at that point
+  canvas.addEventListener('click', e => {
+    if (e.target.classList.contains('me-dot')) return;
+    const layerRect = panLayer.getBoundingClientRect();
+    // panLayer origin is top-left of image; transform is translate(-50% + pan, -50% + pan) scale
+    // Compute map coords from click vs layerRect
+    const nx = (e.clientX - layerRect.left) / layerRect.width;
+    const ny = (e.clientY - layerRect.top) / layerRect.height;
+    if (nx < 0 || nx > 1 || ny < 0 || ny > 1) return;
+    const s = scenesData[idx];
+    s.mapPos = { x: nx, y: ny };
+    editScene(s.id, { mapPos: s.mapPos });
+    updateStats();
+    renderDots();
+    statusEl.textContent = 'Placed';
+    toast(`Placed "${s.name}" — advancing to next unplaced`);
+    // Advance to next unplaced scene
+    let next = idx;
+    for (let k = 1; k <= scenesData.length; k++) {
+      const j = (idx + k) % scenesData.length;
+      if (!isPlaced(scenesData[j])) { next = j; break; }
+    }
+    if (next !== idx) setCurrent(next);
+    else buildSceneList();
+  });
+
+  // Canvas mousemove → coords display
+  canvas.addEventListener('mousemove', e => {
+    const layerRect = panLayer.getBoundingClientRect();
+    const nx = (e.clientX - layerRect.left) / layerRect.width;
+    const ny = (e.clientY - layerRect.top) / layerRect.height;
+    if (nx >= 0 && nx <= 1 && ny >= 0 && ny <= 1) {
+      coordsEl.textContent = `${(nx*100).toFixed(1)}%, ${(ny*100).toFixed(1)}%`;
+    } else {
+      coordsEl.textContent = 'outside map';
+    }
+  });
+
+  // Pan by dragging background (not on dots)
+  let panning = false, pStart = null;
+  canvas.addEventListener('pointerdown', e => {
+    if (e.target.classList.contains('me-dot')) return;
+    if (e.button !== 1 && !e.shiftKey && e.pointerType !== 'touch') return; // middle or shift-drag
+    panning = true;
+    pStart = { x: e.clientX, y: e.clientY, px: panX, py: panY };
+    canvas.style.cursor = 'grabbing';
+  });
+  window.addEventListener('pointermove', e => {
+    if (!panning) return;
+    panX = pStart.px + (e.clientX - pStart.x);
+    panY = pStart.py + (e.clientY - pStart.y);
+    applyTransform();
+  });
+  window.addEventListener('pointerup', () => {
+    panning = false;
+    if (modal && !modal.classList.contains('hidden')) canvas.style.cursor = 'crosshair';
+  });
+
+  // Wheel zoom centered on cursor
+  canvas.addEventListener('wheel', e => {
+    if (modal.classList.contains('hidden')) return;
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+    const newScale = Math.max(0.2, Math.min(8, scale * factor));
+    // Zoom around cursor
+    const rect = canvas.getBoundingClientRect();
+    const cx = e.clientX - rect.left - rect.width / 2;
+    const cy = e.clientY - rect.top - rect.height / 2;
+    panX = cx - (cx - panX) * (newScale / scale);
+    panY = cy - (cy - panY) * (newScale / scale);
+    scale = newScale;
+    applyTransform();
+  }, { passive: false });
+
+  // Toolbar buttons
+  document.getElementById('me-zoom-in').addEventListener('click', () => {
+    scale = Math.min(8, scale * 1.2); applyTransform();
+  });
+  document.getElementById('me-zoom-out').addEventListener('click', () => {
+    scale = Math.max(0.2, scale / 1.2); applyTransform();
+  });
+  document.getElementById('me-fit').addEventListener('click', fitToView);
+  document.getElementById('me-clear-current').addEventListener('click', () => {
+    const s = scenesData[idx];
+    s.mapPos = Object.assign({}, DEFAULT_MAP);
+    editScene(s.id, { mapPos: s.mapPos });
+    statusEl.textContent = 'Not placed';
+    updateStats();
+    renderDots();
+    buildSceneList();
+    toast(`Cleared "${s.name}"`);
+  });
+  document.getElementById('me-clear-all').addEventListener('click', () => {
+    if (!confirm(`Clear positions for all ${scenesData.length} scenes?`)) return;
+    scenesData.forEach(s => {
+      s.mapPos = Object.assign({}, DEFAULT_MAP);
+      editScene(s.id, { mapPos: s.mapPos });
+    });
+    updateStats();
+    renderDots();
+    buildSceneList();
+    statusEl.textContent = 'Not placed';
+    toast('Cleared all scene positions');
+  });
+  document.getElementById('me-prev').addEventListener('click', () => setCurrent(idx - 1));
+  document.getElementById('me-next').addEventListener('click', () => setCurrent(idx + 1));
+  document.getElementById('me-close').addEventListener('click', close);
+
+  function open() {
+    if (!isAdmin) { showAuth(); return; }
+    if (!tryEnterAdminMode('mapedit')) return;
+    modal.classList.remove('hidden');
+    // Read image natural size once it's loaded
+    if (mapImg.naturalWidth) {
+      imgNatural = { w: mapImg.naturalWidth, h: mapImg.naturalHeight };
+    } else {
+      mapImg.addEventListener('load', () => {
+        imgNatural = { w: mapImg.naturalWidth, h: mapImg.naturalHeight };
+        mapImg.style.width = imgNatural.w + 'px';
+        mapImg.style.height = imgNatural.h + 'px';
+        fitToView();
+        renderDots();
+      }, { once: true });
+    }
+    mapImg.style.width = imgNatural.w + 'px';
+    mapImg.style.height = imgNatural.h + 'px';
+    setCurrent(Math.min(idx, scenesData.length - 1));
+    updateStats();
+    setTimeout(fitToView, 30);
+  }
+  function close() {
+    modal.classList.add('hidden');
+    exitAdminMode('mapedit');
+    // Refresh the main minimap with new positions
+    if (typeof buildMinimap === 'function') buildMinimap();
+  }
+
+  btn.addEventListener('click', open);
+
+  window.addEventListener('keydown', e => {
+    if (modal.classList.contains('hidden')) return;
+    switch (e.key) {
+      case 'Escape':     e.preventDefault(); close(); break;
+      case 'ArrowLeft':  e.preventDefault(); setCurrent(idx - 1); break;
+      case 'ArrowRight': e.preventDefault(); setCurrent(idx + 1); break;
+      case 'Delete': case 'Backspace':
+        e.preventDefault();
+        document.getElementById('me-clear-current').click();
+        break;
+      case '+': case '=': document.getElementById('me-zoom-in').click(); break;
+      case '-': case '_': document.getElementById('me-zoom-out').click(); break;
+      case 'f': case 'F': fitToView(); break;
+    }
+  });
+})();
+
+// --- Calibration: 2-point photo↔plan heading --------------------------------
+(function setupCalibrate() {
+  const btn = document.getElementById('calibrate-btn');
+  const overlay = document.getElementById('calibrate-overlay');
+  const stepEl = document.getElementById('cal-step');
+  const instrEl = document.getElementById('cal-instr');
+  const cancelBtn = document.getElementById('cal-cancel');
+  let active = false;
+  let phase = 0; // 0:photoA 1:mapA 2:photoB 3:mapB
+  const pts = [{}, {}];
+  const markers = [];
+
+  function clearMarkers() {
+    markers.forEach(m => m.remove());
+    markers.length = 0;
+  }
+  function addMarker(parent, leftPct, topPct, n) {
+    const m = document.createElement('div');
+    m.className = 'cal-marker';
+    m.textContent = n;
+    m.style.left = leftPct + '%';
+    m.style.top = topPct + '%';
+    parent.appendChild(m);
+    markers.push(m);
+  }
+  function setInstr() {
+    const i = Math.floor(phase / 2) + 1;
+    stepEl.textContent = i;
+    if (phase % 2 === 0) instrEl.textContent = `Click point ${i} in the 360 photo.`;
+    else instrEl.textContent = `Click the same point ${i} on the floor-plan minimap.`;
+  }
+  function start() {
+    if (!isAdmin) { showAuth(); return; }
+    active = true; phase = 0; pts[0] = {}; pts[1] = {};
+    clearMarkers();
+    overlay.classList.remove('hidden');
+    document.body.classList.add('calibrating');
+    setInstr();
+  }
+  function stop() {
+    active = false;
+    overlay.classList.add('hidden');
+    document.body.classList.remove('calibrating');
+    clearMarkers();
+  }
+  function finish() {
+    const s = scenesData[currentSceneIdx];
+    const mp = s.mapPos || { x: 0.5, y: 0.5 };
+    const initYaw = s.initialYaw || 0;
+    let sumSin = 0, sumCos = 0;
+    for (let k = 0; k < 2; k++) {
+      const p = pts[k];
+      // map angle: from scene mapPos to clicked map point. Note SVG y goes down,
+      // so flip y for a math-style angle (0 = +X, CCW positive).
+      const dx = p.mapX - mp.x;
+      const dy = -(p.mapY - mp.y);
+      const mapAng = Math.atan2(dy, dx) * 180 / Math.PI;
+      // photo angle: yaw delta from current scene's initialYaw
+      let photoAng = p.yaw - initYaw;
+      // headingOffset = mapAng - photoAng
+      let off = mapAng - photoAng;
+      const r = off * Math.PI / 180;
+      sumSin += Math.sin(r);
+      sumCos += Math.cos(r);
+    }
+    let heading = Math.atan2(sumSin, sumCos) * 180 / Math.PI;
+    heading = Math.round(heading * 10) / 10;
+    s.headingOffset = heading;
+    editScene(s.id, { headingOffset: heading });
+    toast(`Heading saved: ${heading}°`);
+    stop();
+  }
+
+  btn.addEventListener('click', () => {
+    if (active) stop(); else start();
+  });
+  cancelBtn.addEventListener('click', e => { e.stopPropagation(); stop(); });
+
+  // Photo click — capture phase, before any other handler
+  document.getElementById('viewer-wrap').addEventListener('click', e => {
+    if (!active) return;
+    if (phase % 2 !== 0) return;
+    e.stopPropagation();
+    const { yawDeg, pitchDeg } = screenToYawPitch(e.clientX, e.clientY);
+    const k = Math.floor(phase / 2);
+    pts[k].yaw = yawDeg;
+    pts[k].pitch = pitchDeg;
+    // marker on viewer-wrap at click position (px relative to wrap)
+    const wrap = document.getElementById('viewer-wrap');
+    const r = wrap.getBoundingClientRect();
+    const lx = ((e.clientX - r.left) / r.width) * 100;
+    const ly = ((e.clientY - r.top) / r.height) * 100;
+    addMarker(wrap, lx, ly, k + 1);
+    phase++;
+    setInstr();
+  }, true);
+
+  // Minimap click
+  document.getElementById('minimap-inner').addEventListener('click', e => {
+    if (!active) return;
+    if (phase % 2 !== 1) return;
+    e.stopPropagation();
+    const inner = document.getElementById('minimap-inner');
+    const r = inner.getBoundingClientRect();
+    const mx = (e.clientX - r.left) / r.width;
+    const my = (e.clientY - r.top) / r.height;
+    const k = Math.floor(phase / 2);
+    pts[k].mapX = mx;
+    pts[k].mapY = my;
+    addMarker(inner, mx * 100, my * 100, k + 1);
+    phase++;
+    if (phase >= 4) finish();
+    else setInstr();
+  }, true);
+})();
+
+// ============================================================================
+// Wave C — Draw 3D: in-viewer polygon → extruded box
+// ============================================================================
+let drawnObjectsGroup = new THREE.Group();
+scene.add(drawnObjectsGroup);
+const FLOOR_Y = -120;
+const draw3dPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 120); // y = -120
+const draw3dRaycaster = new THREE.Raycaster();
+let draw3dActive = false;
+let currentPolygon = []; // THREE.Vector3 in world space (y = FLOOR_Y)
+let currentVertexDots = []; // DOM elements
+let currentPreviewLine = null; // THREE.Line in scene
+let draw3dOverlay = null;
+
+function getDrawnMaterial() {
+  return new THREE.MeshStandardMaterial({
+    color: 0xFFD03F, roughness: 0.5, metalness: 0.1,
+    transparent: true, opacity: 0.85
+  });
+}
+
+function buildExtrudedMeshFromPoints(pts2d, height) {
+  if (!pts2d || pts2d.length < 3) return null;
+  const shape = new THREE.Shape();
+  shape.moveTo(pts2d[0][0], pts2d[0][1]);
+  for (let i = 1; i < pts2d.length; i++) shape.lineTo(pts2d[i][0], pts2d[i][1]);
+  shape.lineTo(pts2d[0][0], pts2d[0][1]);
+  const geo = new THREE.ExtrudeGeometry(shape, { depth: height, bevelEnabled: false });
+  // Extrude is along +Z of shape (which is XZ floor); we need height along +Y world.
+  // Build shape in XZ, then rotate so the extrusion axis becomes +Y.
+  geo.rotateX(-Math.PI / 2);
+  const mesh = new THREE.Mesh(geo, getDrawnMaterial());
+  mesh.position.y = FLOOR_Y;
+  mesh.userData.isDrawn = true;
+  return mesh;
+}
+
+function rebuildDrawnObjects(s) {
+  disposeGroup(drawnObjectsGroup);
+  scene.remove(drawnObjectsGroup);
+  drawnObjectsGroup = new THREE.Group();
+  drawnObjectsGroup.visible = furnitureVisible;
+  (s.drawnShapes || []).forEach(ds => {
+    const m = buildExtrudedMeshFromPoints(ds.points, ds.height || 80);
+    if (m) drawnObjectsGroup.add(m);
+  });
+  scene.add(drawnObjectsGroup);
+}
+
+// Tie visibility to furniture toggle
+const _origFxBtn = document.getElementById('fx-toggle');
+_origFxBtn.addEventListener('click', () => {
+  drawnObjectsGroup.visible = furnitureVisible;
+});
+
+function pointerToFloor(clientX, clientY) {
+  const r = renderer.domElement.getBoundingClientRect();
+  const nx = ((clientX - r.left) / r.width) * 2 - 1;
+  const ny = -((clientY - r.top) / r.height) * 2 + 1;
+  draw3dRaycaster.setFromCamera({ x: nx, y: ny }, camera);
+  const hit = new THREE.Vector3();
+  const ok = draw3dRaycaster.ray.intersectPlane(draw3dPlane, hit);
+  return ok ? hit : null;
+}
+
+function projectToScreen(v3) {
+  const wrap = document.getElementById('viewer-wrap');
+  const r = wrap.getBoundingClientRect();
+  const v = v3.clone().project(camera);
+  return {
+    x: (v.x * 0.5 + 0.5) * r.width,
+    y: (-v.y * 0.5 + 0.5) * r.height,
+    behind: v.z > 1
+  };
+}
+
+function refreshVertexDots() {
+  const wrap = document.getElementById('viewer-wrap');
+  currentVertexDots.forEach(d => d.remove());
+  currentVertexDots = [];
+  currentPolygon.forEach(p => {
+    const s = projectToScreen(p);
+    const dot = document.createElement('div');
+    dot.className = 'draw3d-vertex';
+    dot.style.left = s.x + 'px';
+    dot.style.top = s.y + 'px';
+    if (s.behind) dot.style.display = 'none';
+    wrap.appendChild(dot);
+    currentVertexDots.push(dot);
+  });
+}
+
+function refreshPreviewLine() {
+  if (currentPreviewLine) {
+    scene.remove(currentPreviewLine);
+    currentPreviewLine.geometry.dispose();
+    currentPreviewLine.material.dispose();
+    currentPreviewLine = null;
+  }
+  if (currentPolygon.length >= 2) {
+    const pts = currentPolygon.map(p => p.clone());
+    if (currentPolygon.length >= 3) pts.push(currentPolygon[0].clone());
+    const g = new THREE.BufferGeometry().setFromPoints(pts);
+    const m = new THREE.LineBasicMaterial({ color: 0xFFD03F, transparent: true, opacity: 0.9 });
+    currentPreviewLine = new THREE.Line(g, m);
+    scene.add(currentPreviewLine);
+  }
+}
+
+function clearCurrentDrawing() {
+  currentPolygon = [];
+  currentVertexDots.forEach(d => d.remove());
+  currentVertexDots = [];
+  if (currentPreviewLine) {
+    scene.remove(currentPreviewLine);
+    currentPreviewLine.geometry.dispose();
+    currentPreviewLine.material.dispose();
+    currentPreviewLine = null;
+  }
+}
+
+function finishCurrentPolygon() {
+  if (currentPolygon.length < 3) {
+    toast('Need at least 3 points');
+    return;
+  }
+  const pts2d = currentPolygon.map(p => [p.x, p.z]);
+  const mesh = buildExtrudedMeshFromPoints(pts2d, 80);
+  if (mesh) {
+    drawnObjectsGroup.add(mesh);
+    drawnObjectsGroup.visible = furnitureVisible;
+  }
+  // Persist
+  const s = scenesData[currentSceneIdx];
+  s.drawnShapes = s.drawnShapes || [];
+  s.drawnShapes.push({ points: pts2d, height: 80 });
+  try { editScene(s.id, { drawnShapes: s.drawnShapes }); } catch (e) {}
+  toast('Extruded box added (' + pts2d.length + ' pts)');
+  clearCurrentDrawing();
+}
+
+function showDraw3dOverlay() {
+  if (draw3dOverlay) return;
+  draw3dOverlay = document.createElement('div');
+  draw3dOverlay.id = 'draw3d-overlay';
+  draw3dOverlay.innerHTML = '<span>Click to add points · Enter to extrude · Esc to cancel</span>' +
+    '<button id="draw3d-finish">Finish</button>' +
+    '<button id="draw3d-cancel" class="ghost">Cancel</button>' +
+    '<button id="draw3d-clear" class="ghost" style="border-color:#ff5252;color:#ff5252;" title="Delete all drawn shapes in this scene">🗑 Clear Scene</button>';
+  document.getElementById('viewer-wrap').appendChild(draw3dOverlay);
+  document.getElementById('draw3d-finish').addEventListener('click', e => {
+    e.stopPropagation(); finishCurrentPolygon();
+  });
+  document.getElementById('draw3d-cancel').addEventListener('click', e => {
+    e.stopPropagation(); clearCurrentDrawing(); toast('Drawing cancelled');
+  });
+  document.getElementById('draw3d-clear').addEventListener('click', e => {
+    e.stopPropagation();
+    const s = scenesData[currentSceneIdx];
+    if (!s) return;
+    const n = (s.drawnShapes || []).length;
+    if (!n) { toast('No drawn shapes in this scene'); return; }
+    if (!confirm(`Delete ${n} drawn shape(s) from "${s.name}"?`)) return;
+    s.drawnShapes = [];
+    try { editScene(s.id, { drawnShapes: [] }); } catch (_) {}
+    rebuildDrawnObjects(s);
+    toast(`Cleared ${n} drawn shape(s)`);
+  });
+}
+function hideDraw3dOverlay() {
+  if (draw3dOverlay) { draw3dOverlay.remove(); draw3dOverlay = null; }
+}
+
+function setDraw3dActive(on) {
+  draw3dActive = on;
+  document.body.classList.toggle('draw3d-mode', on);
+  const btn = document.getElementById('draw3d-btn');
+  if (btn) btn.classList.toggle('active', on);
+  if (on) {
+    showDraw3dOverlay();
+    toast('Draw 3D: click points, Enter to extrude');
+  } else {
+    hideDraw3dOverlay();
+    clearCurrentDrawing();
+  }
+}
+
+document.getElementById('draw3d-btn').addEventListener('click', e => {
+  e.stopPropagation();
+  if (!isAdmin) { showAuth(); return; }
+  setDraw3dActive(!draw3dActive);
+});
+
+// Capture-phase click handler so it pre-empts hotspot/measure handlers
+document.getElementById('viewer-wrap').addEventListener('click', e => {
+  if (!draw3dActive) return;
+  if (e.target.closest && (e.target.closest('#admin-bar') || e.target.closest('#sidebar') ||
+      e.target.closest('#picker') || e.target.closest('#draw3d-overlay'))) return;
+  e.stopPropagation();
+  const hit = pointerToFloor(e.clientX, e.clientY);
+  if (!hit) { toast('Click lower (towards floor)'); return; }
+  hit.y = FLOOR_Y;
+  currentPolygon.push(hit);
+  refreshVertexDots();
+  refreshPreviewLine();
+}, true);
+
+window.addEventListener('keydown', e => {
+  if (!draw3dActive) return;
+  if (e.key === 'Enter') { e.preventDefault(); finishCurrentPolygon(); }
+  else if (e.key === 'Escape') { e.preventDefault(); clearCurrentDrawing(); toast('Drawing cleared'); }
+});
+
+// Reproject vertex dots each frame as the camera moves
+(function animateDraw3dDots() {
+  if (draw3dActive && currentPolygon.length) {
+    const wrap = document.getElementById('viewer-wrap');
+    const r = wrap.getBoundingClientRect();
+    currentPolygon.forEach((p, i) => {
+      const dot = currentVertexDots[i];
+      if (!dot) return;
+      const v = p.clone().project(camera);
+      const sx = (v.x * 0.5 + 0.5) * r.width;
+      const sy = (-v.y * 0.5 + 0.5) * r.height;
+      dot.style.left = sx + 'px';
+      dot.style.top = sy + 'px';
+      dot.style.display = (v.z > 1) ? 'none' : '';
+    });
+  }
+  requestAnimationFrame(animateDraw3dDots);
+})();
+
+// ============================================================================
+// Wave C — Guided Tours: editor + branching playback
+// ============================================================================
+const TOURS_KEY = 'trevolution_guided_tours_v1';
+const TOUR_MAX_STEPS = 64;
+const TOUR_MAX_CHOICES = 4;
+
+function loadTours() {
+  try { return JSON.parse(localStorage.getItem(TOURS_KEY)) || []; }
+  catch { return []; }
+}
+function saveTours(tours) {
+  localStorage.setItem(TOURS_KEY, JSON.stringify(tours));
+}
+let toursState = { tours: loadTours(), selectedId: null, tab: 'edit' };
+
+function tNewId() { return 'tour_' + Math.random().toString(36).slice(2, 9); }
+
+function findSceneIdxById(sid) {
+  return scenesData.findIndex(s => s.id === sid);
+}
+
+// ---- Modal open/close & rendering ----
+function openToursModal() {
+  if (!isAdmin) { showAuth(); return; }
+  toursState.tours = loadTours();
+  if (!toursState.selectedId && toursState.tours.length) {
+    toursState.selectedId = toursState.tours[0].id;
+  }
+  document.getElementById('tours-modal').classList.remove('hidden');
+  renderToursModal();
+}
+function closeToursModal() {
+  document.getElementById('tours-modal').classList.add('hidden');
+}
+
+function renderToursModal() {
+  const body = document.getElementById('tours-body');
+  document.getElementById('tours-tab-edit').classList.toggle('active', toursState.tab === 'edit');
+  document.getElementById('tours-tab-play').classList.toggle('active', toursState.tab === 'play');
+  if (toursState.tab === 'edit') body.innerHTML = renderEditTabHtml();
+  else body.innerHTML = renderPlayTabHtml();
+  wireToursModal();
+}
+
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderEditTabHtml() {
+  const tours = toursState.tours;
+  let html = '<div class="row">';
+  html += '<button class="btn primary" id="t-new">+ New Tour</button>';
+  html += '<button class="btn" id="t-export">Export JSON</button>';
+  html += '<button class="btn" id="t-import">Import JSON</button>';
+  html += '<input type="file" id="t-import-file" accept="application/json" style="display:none">';
+  html += '</div>';
+  html += '<div class="tour-list">';
+  if (!tours.length) html += '<div class="empty">No tours yet. Click "+ New Tour" to start.</div>';
+  tours.forEach(t => {
+    const active = t.id === toursState.selectedId ? ' active' : '';
+    html += `<div class="titem${active}" data-id="${t.id}">
+      <div class="nm">${escHtml(t.name)} <span style="color:var(--tv-grey);font-weight:400">(${(t.steps||[]).length} steps)</span></div>
+      <button class="btn" data-act="select" data-id="${t.id}">Edit</button>
+      <button class="btn danger" data-act="delete" data-id="${t.id}">✕</button>
+    </div>`;
+  });
+  html += '</div>';
+
+  const sel = tours.find(t => t.id === toursState.selectedId);
+  if (sel) {
+    html += '<div class="row" style="margin-top:12px;">';
+    html += `<input class="tname" id="t-name" value="${escHtml(sel.name)}">`;
+    html += '<button class="btn primary" id="t-save">💾 Save</button>';
+    html += '<button class="btn" id="t-add-step">+ Add current scene as step</button>';
+    html += '</div>';
+    const steps = sel.steps || [];
+    if (!steps.length) html += '<div class="empty">No steps. Navigate to a scene in the viewer behind, then click "+ Add current scene as step".</div>';
+    steps.forEach((st, i) => {
+      const sIdx = findSceneIdxById(st.sceneId);
+      const sName = sIdx >= 0 ? scenesData[sIdx].name : `⚠ missing (${st.sceneId})`;
+      html += `<div class="step" data-i="${i}">
+        <div class="top">
+          <div class="idx">${i + 1}</div>
+          <div class="scn">${escHtml(sName)}</div>
+          <button class="btn" data-act="up" data-i="${i}">↑</button>
+          <button class="btn" data-act="down" data-i="${i}">↓</button>
+          <button class="btn danger" data-act="del" data-i="${i}">✕</button>
+        </div>
+        <div class="meta">
+          <input type="text" class="cap" data-i="${i}" placeholder="Caption" value="${escHtml(st.captionText || '')}">
+          <input type="number" class="dur" data-i="${i}" min="500" step="500" value="${st.durationMs || 6000}" title="Duration ms" style="width:110px;">
+          <input type="number" class="yaw" data-i="${i}" step="1" value="${st.initialYaw == null ? 0 : st.initialYaw}" title="Initial yaw (deg)" style="width:90px;">
+          <button class="btn" data-act="addchoice" data-i="${i}">+ Choice</button>
+        </div>`;
+      if (st.choices && st.choices.length) {
+        html += '<div class="choices">';
+        st.choices.forEach((c, ci) => {
+          html += `<div class="ch">
+            <input type="text" class="lbl" data-i="${i}" data-ci="${ci}" placeholder="Choice label" value="${escHtml(c.label || '')}">
+            <input type="number" class="nxt" data-i="${i}" data-ci="${ci}" min="1" value="${(c.nextStep || 0) + 1}" title="Jump to step #">
+            <button class="btn danger" data-act="delchoice" data-i="${i}" data-ci="${ci}">✕</button>
+          </div>`;
+        });
+        html += '</div>';
+      }
+      html += '</div>';
+    });
+  }
+  return html;
+}
+
+function renderPlayTabHtml() {
+  const tours = toursState.tours;
+  let html = '<div class="tour-list">';
+  if (!tours.length) html += '<div class="empty">No tours saved. Switch to Edit tab to create one.</div>';
+  tours.forEach(t => {
+    html += `<div class="titem">
+      <div class="nm">${escHtml(t.name)} <span style="color:var(--tv-grey);font-weight:400">(${(t.steps||[]).length} steps)</span></div>
+      <button class="btn primary" data-act="play" data-id="${t.id}">▶ Play</button>
+    </div>`;
+  });
+  html += '</div>';
+  return html;
+}
+
+function wireToursModal() {
+  document.getElementById('tours-tab-edit').onclick = () => { toursState.tab = 'edit'; renderToursModal(); };
+  document.getElementById('tours-tab-play').onclick = () => { toursState.tab = 'play'; renderToursModal(); };
+  document.getElementById('tours-close').onclick = closeToursModal;
+
+  if (toursState.tab === 'edit') {
+    const newBtn = document.getElementById('t-new');
+    if (newBtn) newBtn.onclick = () => {
+      const name = prompt('Tour name:', 'Executive Walkthrough');
+      if (!name) return;
+      const t = { id: tNewId(), name, steps: [] };
+      toursState.tours.push(t);
+      toursState.selectedId = t.id;
+      saveTours(toursState.tours);
+      renderToursModal();
+    };
+    document.getElementById('t-export').onclick = exportTours;
+    document.getElementById('t-import').onclick = () => document.getElementById('t-import-file').click();
+    document.getElementById('t-import-file').onchange = importToursFile;
+
+    document.querySelectorAll('.tour-list .titem [data-act]').forEach(b => {
+      b.onclick = () => {
+        const id = b.dataset.id;
+        const act = b.dataset.act;
+        if (act === 'select') { toursState.selectedId = id; renderToursModal(); }
+        else if (act === 'delete') {
+          if (!confirm('Delete this tour?')) return;
+          toursState.tours = toursState.tours.filter(x => x.id !== id);
+          if (toursState.selectedId === id) toursState.selectedId = toursState.tours[0]?.id || null;
+          saveTours(toursState.tours);
+          renderToursModal();
+          toast('Tour deleted');
+        }
+      };
+    });
+
+    const sel = toursState.tours.find(t => t.id === toursState.selectedId);
+    if (sel) {
+      const nameInp = document.getElementById('t-name');
+      if (nameInp) nameInp.oninput = e => { sel.name = e.target.value; };
+      document.getElementById('t-save').onclick = () => {
+        // collect inputs back to model
+        document.querySelectorAll('#tours-body .step').forEach(stEl => {
+          const i = +stEl.dataset.i;
+          const st = sel.steps[i];
+          const cap = stEl.querySelector('.cap'); if (cap) st.captionText = cap.value;
+          const dur = stEl.querySelector('.dur'); if (dur) st.durationMs = Math.max(500, +dur.value || 6000);
+          const yaw = stEl.querySelector('.yaw'); if (yaw) st.initialYaw = +yaw.value || 0;
+          if (st.choices) {
+            stEl.querySelectorAll('.ch').forEach((chEl, ci) => {
+              const lbl = chEl.querySelector('.lbl');
+              const nxt = chEl.querySelector('.nxt');
+              if (st.choices[ci]) {
+                st.choices[ci].label = lbl.value;
+                st.choices[ci].nextStep = Math.max(0, (+nxt.value || 1) - 1);
+              }
+            });
+          }
+        });
+        saveTours(toursState.tours);
+        toast('Tour saved');
+        renderToursModal();
+      };
+      document.getElementById('t-add-step').onclick = () => {
+        if ((sel.steps || []).length >= TOUR_MAX_STEPS) { toast(`Max ${TOUR_MAX_STEPS} steps`); return; }
+        const cap = prompt('Caption for this step:', scenesData[currentSceneIdx].name) || '';
+        const durStr = prompt('Duration (ms):', '6000');
+        const dur = Math.max(500, parseInt(durStr, 10) || 6000);
+        sel.steps = sel.steps || [];
+        sel.steps.push({
+          sceneId: scenesData[currentSceneIdx].id,
+          initialYaw: Math.round(lon * 10) / 10,
+          captionText: cap,
+          durationMs: dur,
+          choices: []
+        });
+        saveTours(toursState.tours);
+        renderToursModal();
+        toast('Step added');
+      };
+
+      document.querySelectorAll('#tours-body .step [data-act]').forEach(b => {
+        b.onclick = () => {
+          const i = +b.dataset.i;
+          const act = b.dataset.act;
+          const steps = sel.steps;
+          if (act === 'up' && i > 0) { [steps[i-1], steps[i]] = [steps[i], steps[i-1]]; }
+          else if (act === 'down' && i < steps.length - 1) { [steps[i+1], steps[i]] = [steps[i], steps[i+1]]; }
+          else if (act === 'del') { steps.splice(i, 1); }
+          else if (act === 'addchoice') {
+            steps[i].choices = steps[i].choices || [];
+            if (steps[i].choices.length >= TOUR_MAX_CHOICES) { toast(`Max ${TOUR_MAX_CHOICES} choices`); return; }
+            steps[i].choices.push({ label: 'New choice', nextStep: Math.min(steps.length - 1, i + 1) });
+          }
+          else if (act === 'delchoice') {
+            const ci = +b.dataset.ci;
+            steps[i].choices.splice(ci, 1);
+          }
+          saveTours(toursState.tours);
+          renderToursModal();
+        };
+      });
+    }
+  } else {
+    document.querySelectorAll('#tours-body [data-act="play"]').forEach(b => {
+      b.onclick = () => {
+        const t = toursState.tours.find(x => x.id === b.dataset.id);
+        closeToursModal();
+        startTourPlayback(t);
+      };
+    });
+  }
+}
+
+function exportTours() {
+  const blob = new Blob([JSON.stringify(toursState.tours, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'tours.json';
+  a.click();
+  toast('tours.json downloaded');
+}
+function importToursFile(e) {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (!Array.isArray(data)) throw new Error('Expected array');
+      toursState.tours = data;
+      saveTours(data);
+      toursState.selectedId = data[0]?.id || null;
+      renderToursModal();
+      toast(`Imported ${data.length} tour(s)`);
+    } catch (err) { toast('Import failed: ' + err.message); }
+  };
+  r.readAsText(f);
+}
+
+// ---- Playback engine ----
+let tourPlayer = null;
+
+function startTourPlayback(tour) {
+  if (!tour || !tour.steps || !tour.steps.length) { toast('Tour has no steps'); return; }
+  tourPlayer = {
+    tour, idx: 0, timer: null,
+    prevAutoRotate: autoRotateEnabled,
+    prevLastInteraction: lastInteraction,
+    visited: new Set()
+  };
+  document.body.classList.add('tour-playing');
+  document.getElementById('tour-overlay').classList.remove('hidden');
+  document.getElementById('tour-skip').onclick = () => tourAdvance();
+  document.getElementById('tour-exit').onclick = () => endTourPlayback(false);
+  // Force auto-rotate at half speed via flag
+  autoRotateEnabled = true;
+  window.__tourSlowRotate = true;
+  playTourStep(0);
+}
+
+function playTourStep(idx) {
+  if (!tourPlayer) return;
+  const tour = tourPlayer.tour;
+  if (idx < 0 || idx >= tour.steps.length) { endTourPlayback(true); return; }
+  // Cycle guard: if a step is revisited too many times, end gracefully
+  tourPlayer.visited.set ? null : null;
+  const step = tour.steps[idx];
+  tourPlayer.idx = idx;
+  if (tourPlayer.timer) { clearTimeout(tourPlayer.timer); tourPlayer.timer = null; }
+
+  // Render caption + dots
+  document.getElementById('tour-caption').textContent = step.captionText || '';
+  const dotsEl = document.getElementById('tour-dots');
+  dotsEl.innerHTML = '';
+  tour.steps.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'd' + (i < idx ? ' done' : (i === idx ? ' cur' : ''));
+    dotsEl.appendChild(d);
+  });
+  document.getElementById('tour-choices').innerHTML = '';
+
+  // Find scene
+  const sIdx = findSceneIdxById(step.sceneId);
+  if (sIdx < 0) {
+    // Missing scene — show a notice and auto-skip after a beat
+    document.getElementById('tour-caption').textContent = `⚠ Scene missing: ${step.sceneId}`;
+    tourPlayer.timer = setTimeout(() => tourAdvance(), 1500);
+    return;
+  }
+
+  const proceed = () => {
+    lon = step.initialYaw || 0;
+    // Schedule end of step
+    const dur = Math.max(500, step.durationMs || 6000);
+    tourPlayer.timer = setTimeout(() => {
+      if (!tourPlayer) return;
+      if (step.choices && step.choices.length) showStepChoices(step);
+      else tourAdvance();
+    }, dur);
+  };
+
+  if (sIdx === currentSceneIdx) {
+    proceed();
+  } else {
+    loadScene(sIdx).then(proceed);
+  }
+}
+
+function showStepChoices(step) {
+  const wrap = document.getElementById('tour-choices');
+  wrap.innerHTML = '';
+  step.choices.slice(0, TOUR_MAX_CHOICES).forEach(c => {
+    const btn = document.createElement('button');
+    btn.textContent = c.label || '(unnamed)';
+    btn.onclick = () => {
+      const target = (typeof c.nextStep === 'number') ? c.nextStep : -1;
+      if (target < 0 || target >= tourPlayer.tour.steps.length) {
+        toast('Choice points to invalid step');
+        endTourPlayback(true);
+        return;
+      }
+      playTourStep(target);
+    };
+    wrap.appendChild(btn);
+  });
+}
+
+function tourAdvance() {
+  if (!tourPlayer) return;
+  const next = tourPlayer.idx + 1;
+  if (next >= tourPlayer.tour.steps.length) endTourPlayback(true);
+  else playTourStep(next);
+}
+
+function endTourPlayback(showSplash) {
+  if (!tourPlayer) return;
+  if (tourPlayer.timer) clearTimeout(tourPlayer.timer);
+  autoRotateEnabled = tourPlayer.prevAutoRotate;
+  window.__tourSlowRotate = false;
+  tourPlayer = null;
+  document.getElementById('tour-overlay').classList.add('hidden');
+  if (showSplash) {
+    const sp = document.getElementById('tour-complete');
+    sp.classList.remove('hidden');
+    setTimeout(() => {
+      sp.classList.add('hidden');
+      document.body.classList.remove('tour-playing');
+    }, 2000);
+  } else {
+    document.body.classList.remove('tour-playing');
+  }
+}
+
+// Slow auto-rotate during tour: patch animate loop's increment via monkey-patch
+// (we override the increment by listening for the flag in a wrapper)
+(function patchAutoRotate(){
+  // Re-implement subtle slowdown by intercepting lon changes via rAF
+  let lastT = performance.now();
+  function tick(now) {
+    const dt = now - lastT; lastT = now;
+    if (window.__tourSlowRotate && tourPlayer) {
+      // counteract half of the normal idle rotation increment so net is half-speed
+      // animate() adds +0.05 per frame when idle; we run continuously so subtract 0.025 each frame
+      lon -= 0.025;
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+
+// Hook tours button
+document.getElementById('tours-btn').addEventListener('click', openToursModal);
+
+// Snapshot tours alongside scenes when saving versions
+(function patchSaveVersion(){
+  const orig = window.saveVersion;
+  if (typeof orig !== 'function') return;
+  window.saveVersion = function() {
+    const name = prompt('Version name (e.g. "v1 reviewed 2026-04-07"):');
+    if (!name) return;
+    const versions = loadVersions();
+    versions.push({
+      name,
+      createdAt: new Date().toISOString(),
+      scenes: JSON.parse(JSON.stringify(scenesData)),
+      tours: JSON.parse(JSON.stringify(loadTours())),
+    });
+    while (versions.length > MAX_VERSIONS) versions.shift();
+    try {
+      localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
+      toast(`Version "${name}" saved (${versions.length}/${MAX_VERSIONS}, incl. tours)`);
+    } catch (e) {
+      console.warn('[versions] quota exceeded, dropping half', e);
+      versions.splice(0, Math.ceil(versions.length / 2));
+      try { localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions)); } catch (_) {}
+      toast('Storage full — older versions dropped');
+    }
+  };
+  // Rebind the existing button to the new function
+  const btn = document.getElementById('save-version-btn');
+  if (btn) {
+    const fresh = btn.cloneNode(true);
+    btn.parentNode.replaceChild(fresh, btn);
+    fresh.addEventListener('click', () => {
+      if (!isAdmin) { showAuth(); return; }
+      window.saveVersion();
+    });
+  }
+})();
+
+// ============================================================================
+// Wave C — Furniture modal UI: catalog + Sketchfab + persistence
+// ============================================================================
+let furnTransform = null;
+let furnGltfLoader = null;
+
+function ensureGltfLoader() {
+  if (!furnGltfLoader && THREE.GLTFLoader) furnGltfLoader = new THREE.GLTFLoader();
+  return furnGltfLoader;
+}
+
+function attachTransformControls(obj3d, item) {
+  if (!THREE.TransformControls) return;
+  if (furnTransform) {
+    try { furnTransform.detach(); scene.remove(furnTransform); } catch (e) {}
+    furnTransform = null;
+  }
+  const tc = new THREE.TransformControls(camera, renderer.domElement);
+  tc.attach(obj3d);
+  tc.setSize(0.6);
+  tc.addEventListener('change', () => {
+    item.position = [obj3d.position.x, obj3d.position.y, obj3d.position.z];
+    item.rotation = [obj3d.rotation.x, obj3d.rotation.y, obj3d.rotation.z];
+  });
+  tc.addEventListener('mouseUp', () => persistUserFurniture());
+  scene.add(tc);
+  furnTransform = tc;
+}
+
+function persistUserFurniture() {
+  const s = scenesData[currentSceneIdx];
+  if (!s) return;
+  s.userFurniture = s.userFurniture || [];
+  try { editScene(s.id, { userFurniture: s.userFurniture }); } catch (e) { console.error(e); }
+}
+
+function spawnUserFurniture(item, interactive) {
+  if (!item) return;
+  if (item.type === 'sketchfab') { placeholderForSketchfab(item, interactive); return; }
+  const obj = TrevolutionFurniture.buildFromSpec(item.type, item.params || {});
+  if (!obj) return;
+  if (item.position) obj.position.fromArray(item.position);
+  if (item.rotation) obj.rotation.fromArray(item.rotation);
+  if (item.scale)    obj.scale.fromArray(item.scale);
+  obj.userData.furnRef = item;
+  furnitureGroup.add(obj);
+  if (interactive) attachTransformControls(obj, item);
+}
+
+function placeholderForSketchfab(item, interactive) {
+  const loader = ensureGltfLoader();
+  if (!loader) { toast('GLTFLoader not available'); return; }
+  Sketchfab.download(item.uid).then(res => {
+    if (!res || !res.gltfUrl) return;
+    loader.load(res.gltfUrl, (gltf) => {
+      const obj = gltf.scene;
+      const baseScale = (item.scale && item.scale[0]) || 100;
+      obj.scale.setScalar(baseScale);
+      if (item.position) obj.position.fromArray(item.position);
+      if (item.rotation) obj.rotation.fromArray(item.rotation);
+      obj.userData.furnRef = item;
+      furnitureGroup.add(obj);
+      if (interactive) attachTransformControls(obj, item);
+    }, undefined, (err) => {
+      console.error('GLTF load failed', err);
+      toast('Sketchfab model load failed');
+    });
+  });
+}
+
+function placeProceduralItem(type) {
+  const s = scenesData[currentSceneIdx];
+  if (!s) return;
+  s.userFurniture = s.userFurniture || [];
+  const item = { type, params: {}, position: [0, -120, -200], rotation: [0, 0, 0] };
+  s.userFurniture.push(item);
+  spawnUserFurniture(item, true);
+  persistUserFurniture();
+  toast('Placed: ' + type);
+  closeFurnModal();
+}
+
+function placeSketchfabItem(uid, name) {
+  if (!Sketchfab.hasToken()) { toast('Set Sketchfab token first'); return; }
+  const s = scenesData[currentSceneIdx];
+  if (!s) return;
+  s.userFurniture = s.userFurniture || [];
+  const item = { type: 'sketchfab', uid, name, position: [0, -120, -200], rotation: [0, 0, 0], scale: [100, 100, 100] };
+  s.userFurniture.push(item);
+  spawnUserFurniture(item, true);
+  persistUserFurniture();
+  toast('Placing: ' + (name || uid));
+  closeFurnModal();
+}
+
+function openFurnModal() {
+  if (typeof isAdmin !== 'undefined' && !isAdmin) { showAuth(); return; }
+  document.getElementById('furn-modal').classList.remove('hidden');
+  renderCatalogGrid();
+  renderTokenRow();
+}
+function closeFurnModal() {
+  document.getElementById('furn-modal').classList.add('hidden');
+}
+
+function renderCatalogGrid() {
+  const grid = document.getElementById('furn-catalog-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const icons = { desk:'🟫', chair:'💺', monitor:'🖥', plant:'🪴', sofa:'🛋', phoneBooth:'☎️', bookshelf:'📚' };
+  TrevolutionFurniture.CATALOG.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = '<div class="thumb">' + (icons[c.type] || '📦') + '</div>' +
+                     '<div class="nm">' + c.label + '</div>' +
+                     '<div class="sub">Procedural</div>' +
+                     '<button data-type="' + c.type + '">Place</button>';
+    card.querySelector('button').addEventListener('click', () => placeProceduralItem(c.type));
+    grid.appendChild(card);
+  });
+}
+
+function renderTokenRow() {
+  const row = document.getElementById('furn-token-row');
+  if (!row) return;
+  if (Sketchfab.hasToken()) {
+    row.innerHTML = '<div class="token-row">Sketchfab token: <strong style="color:var(--tv-yellow)">configured</strong> ' +
+                    '<button id="furn-token-clear">Clear</button></div>';
+    row.querySelector('#furn-token-clear').addEventListener('click', () => {
+      Sketchfab.setToken(''); renderTokenRow(); toast('Token cleared');
+    });
+  } else {
+    row.innerHTML = '<div class="token-row"><strong>Sketchfab token (optional)</strong> — needed only to download models. ' +
+                    'Search works without it. Stored locally only (never in source).' +
+                    '<input id="furn-token-input" type="password" placeholder="Paste token here">' +
+                    '<button id="furn-token-save">Save token</button></div>';
+    row.querySelector('#furn-token-save').addEventListener('click', () => {
+      const v = row.querySelector('#furn-token-input').value.trim();
+      if (v) { Sketchfab.setToken(v); renderTokenRow(); toast('Token saved'); }
+    });
+  }
+}
+
+async function runSketchfabSearch() {
+  const q = document.getElementById('furn-sf-q').value.trim();
+  if (!q) return;
+  const grid = document.getElementById('furn-sf-grid');
+  grid.innerHTML = '<div style="color:var(--tv-grey);padding:8px;">Searching…</div>';
+  const results = await Sketchfab.search(q);
+  grid.innerHTML = '';
+  if (!results.length) { grid.innerHTML = '<div style="color:var(--tv-grey);padding:8px;">No results</div>'; return; }
+  results.forEach(r => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const thumbUrl = r.thumbnail && r.thumbnail.url;
+    // Build safely with DOM APIs — r.name/r.author come from untrusted remote API
+    const thumbDiv = document.createElement('div');
+    thumbDiv.className = 'thumb';
+    if (thumbUrl) {
+      const img = document.createElement('img');
+      img.src = thumbUrl;
+      img.alt = '';
+      thumbDiv.appendChild(img);
+    } else {
+      thumbDiv.textContent = '📦';
+    }
+    const nmDiv = document.createElement('div');
+    nmDiv.className = 'nm';
+    nmDiv.textContent = (r.name || '').slice(0, 36);
+    const subDiv = document.createElement('div');
+    subDiv.className = 'sub';
+    subDiv.textContent = 'by ' + (r.author || '—');
+    const placeBtn = document.createElement('button');
+    placeBtn.textContent = 'Place';
+    placeBtn.addEventListener('click', () => placeSketchfabItem(r.uid, r.name));
+    card.appendChild(thumbDiv);
+    card.appendChild(nmDiv);
+    card.appendChild(subDiv);
+    card.appendChild(placeBtn);
+    grid.appendChild(card);
+  });
+}
+
+(function wireFurnModal() {
+  const btn = document.getElementById('furniture-btn');
+  if (btn) btn.addEventListener('click', openFurnModal);
+  const closeBtn = document.getElementById('furn-close');
+  if (closeBtn) closeBtn.addEventListener('click', closeFurnModal);
+  const clearBtn = document.getElementById('furn-clear');
+  if (clearBtn) clearBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const s = scenesData[currentSceneIdx];
+    if (!s) return;
+    const n = (s.furniture || []).length;
+    if (!n) { toast('No furniture in this scene'); return; }
+    if (!confirm(`Delete ${n} furniture item(s) from "${s.name}"?`)) return;
+    s.furniture = [];
+    try { editScene(s.id, { furniture: [] }); } catch (_) {}
+    // Force scene reload to rebuild furnitureGroup cleanly
+    loadScene(currentSceneIdx);
+    toast(`Cleared ${n} furniture item(s)`);
+  });
+  const modal = document.getElementById('furn-modal');
+  if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeFurnModal(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeFurnModal();
+  });
+  document.querySelectorAll('#furn-modal .tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('#furn-modal .tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const which = tab.dataset.tab;
+      document.getElementById('furn-tab-catalog').style.display = (which === 'catalog') ? '' : 'none';
+      document.getElementById('furn-tab-sketchfab').style.display = (which === 'sketchfab') ? '' : 'none';
+    });
+  });
+  const goBtn = document.getElementById('furn-sf-go');
+  if (goBtn) goBtn.addEventListener('click', runSketchfabSearch);
+  const qInput = document.getElementById('furn-sf-q');
+  if (qInput) qInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') runSketchfabSearch(); });
+})();
+
+try {
+  const lsBytes = JSON.stringify(localStorage).length;
+  const totalDrawn = scenesData.reduce((n, s) => n + ((s.drawnShapes || []).length), 0);
+  const totalFurn = scenesData.reduce((n, s) => n + ((s.furniture || []).length), 0);
+  console.info(`[tour] localStorage: ${lsBytes} bytes · drawn shapes: ${totalDrawn} · furniture: ${totalFurn}`);
+} catch (_) {}
+loadConfig().then(() => buildMinimap()).catch(() => buildMinimap());
+</script>
+</body>
+</html>

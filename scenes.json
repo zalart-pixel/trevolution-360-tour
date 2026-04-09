@@ -1,0 +1,1843 @@
+{
+  "title": "Trevolution — RIX JBC 5F",
+  "scenes": [
+    {
+      "id": "scene68",
+      "name": "Scene 68",
+      "image": "scenes/scene68.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene67",
+          "label": "← Scene 67"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene67",
+      "name": "Scene 67",
+      "image": "scenes/scene67.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene68",
+          "label": "→ Scene 68"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene66",
+          "label": "← Scene 66"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene66",
+      "name": "Scene 66",
+      "image": "scenes/scene66.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene67",
+          "label": "→ Scene 67"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene65",
+          "label": "← Scene 65"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene65",
+      "name": "Scene 65",
+      "image": "scenes/scene65.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene66",
+          "label": "→ Scene 66"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene64",
+          "label": "← Scene 64"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene64",
+      "name": "Scene 64",
+      "image": "scenes/scene64.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene65",
+          "label": "→ Scene 65"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene63",
+          "label": "← Scene 63"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene63",
+      "name": "Scene 63",
+      "image": "scenes/scene63.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene64",
+          "label": "→ Scene 64"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene62",
+          "label": "← Scene 62"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene62",
+      "name": "Scene 62",
+      "image": "scenes/scene62.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene63",
+          "label": "→ Scene 63"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene61",
+          "label": "← Scene 61"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene61",
+      "name": "Scene 61",
+      "image": "scenes/scene61.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene62",
+          "label": "→ Scene 62"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene60",
+          "label": "← Scene 60"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene60",
+      "name": "Scene 60",
+      "image": "scenes/scene60.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene61",
+          "label": "→ Scene 61"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene59",
+          "label": "← Scene 59"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene59",
+      "name": "Scene 59",
+      "image": "scenes/scene59.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene60",
+          "label": "→ Scene 60"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene58",
+          "label": "← Scene 58"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene58",
+      "name": "Scene 58",
+      "image": "scenes/scene58.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene59",
+          "label": "→ Scene 59"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene57",
+          "label": "← Scene 57"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene57",
+      "name": "Scene 57",
+      "image": "scenes/scene57.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene58",
+          "label": "→ Scene 58"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene56",
+          "label": "← Scene 56"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene56",
+      "name": "Scene 56",
+      "image": "scenes/scene56.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene57",
+          "label": "→ Scene 57"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene55",
+          "label": "← Scene 55"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene55",
+      "name": "Scene 55",
+      "image": "scenes/scene55.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene56",
+          "label": "→ Scene 56"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene54",
+          "label": "← Scene 54"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene54",
+      "name": "Scene 54",
+      "image": "scenes/scene54.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene55",
+          "label": "→ Scene 55"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene53",
+          "label": "← Scene 53"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene53",
+      "name": "Scene 53",
+      "image": "scenes/scene53.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene54",
+          "label": "→ Scene 54"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene52",
+          "label": "← Scene 52"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene52",
+      "name": "Scene 52",
+      "image": "scenes/scene52.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene53",
+          "label": "→ Scene 53"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene51",
+          "label": "← Scene 51"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene51",
+      "name": "Scene 51",
+      "image": "scenes/scene51.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene52",
+          "label": "→ Scene 52"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene50",
+          "label": "← Scene 50"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene50",
+      "name": "Scene 50",
+      "image": "scenes/scene50.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene51",
+          "label": "→ Scene 51"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene49",
+          "label": "← Scene 49"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene49",
+      "name": "Scene 49",
+      "image": "scenes/scene49.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene50",
+          "label": "→ Scene 50"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene48",
+          "label": "← Scene 48"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene48",
+      "name": "Scene 48",
+      "image": "scenes/scene48.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene49",
+          "label": "→ Scene 49"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene47",
+          "label": "← Scene 47"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene47",
+      "name": "Scene 47",
+      "image": "scenes/scene47.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene48",
+          "label": "→ Scene 48"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene46",
+          "label": "← Scene 46"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene46",
+      "name": "Scene 46",
+      "image": "scenes/scene46.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene47",
+          "label": "→ Scene 47"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene45",
+          "label": "← Scene 45"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene45",
+      "name": "Scene 45",
+      "image": "scenes/scene45.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene46",
+          "label": "→ Scene 46"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene44",
+          "label": "← Scene 44"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene44",
+      "name": "Scene 44",
+      "image": "scenes/scene44.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene45",
+          "label": "→ Scene 45"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene43",
+          "label": "← Scene 43"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene43",
+      "name": "Scene 43",
+      "image": "scenes/scene43.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene44",
+          "label": "→ Scene 44"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene42",
+          "label": "← Scene 42"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene42",
+      "name": "Scene 42",
+      "image": "scenes/scene42.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene43",
+          "label": "→ Scene 43"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene41",
+          "label": "← Scene 41"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene41",
+      "name": "Scene 41",
+      "image": "scenes/scene41.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene42",
+          "label": "→ Scene 42"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene40",
+          "label": "← Scene 40"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene40",
+      "name": "Scene 40",
+      "image": "scenes/scene40.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene41",
+          "label": "→ Scene 41"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene39",
+          "label": "← Scene 39"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene39",
+      "name": "Scene 39",
+      "image": "scenes/scene39.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene40",
+          "label": "→ Scene 40"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene38",
+          "label": "← Scene 38"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene38",
+      "name": "Scene 38",
+      "image": "scenes/scene38.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene39",
+          "label": "→ Scene 39"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene37",
+          "label": "← Scene 37"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene37",
+      "name": "Scene 37",
+      "image": "scenes/scene37.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene38",
+          "label": "→ Scene 38"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene36",
+          "label": "← Scene 36"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene36",
+      "name": "Scene 36",
+      "image": "scenes/scene36.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene37",
+          "label": "→ Scene 37"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene35",
+          "label": "← Scene 35"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene35",
+      "name": "Scene 35",
+      "image": "scenes/scene35.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene36",
+          "label": "→ Scene 36"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene34",
+          "label": "← Scene 34"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene34",
+      "name": "Scene 34",
+      "image": "scenes/scene34.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene35",
+          "label": "→ Scene 35"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene33",
+          "label": "← Scene 33"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene33",
+      "name": "Scene 33",
+      "image": "scenes/scene33.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene34",
+          "label": "→ Scene 34"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene32",
+          "label": "← Scene 32"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene32",
+      "name": "Scene 32",
+      "image": "scenes/scene32.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene33",
+          "label": "→ Scene 33"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene31",
+          "label": "← Scene 31"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene31",
+      "name": "Scene 31",
+      "image": "scenes/scene31.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene32",
+          "label": "→ Scene 32"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene30",
+          "label": "← Scene 30"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene30",
+      "name": "Scene 30",
+      "image": "scenes/scene30.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene31",
+          "label": "→ Scene 31"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene29",
+          "label": "← Scene 29"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene29",
+      "name": "Scene 29",
+      "image": "scenes/scene29.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene30",
+          "label": "→ Scene 30"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene28",
+          "label": "← Scene 28"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene28",
+      "name": "Scene 28",
+      "image": "scenes/scene28.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene29",
+          "label": "→ Scene 29"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene27",
+          "label": "← Scene 27"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene27",
+      "name": "Scene 27",
+      "image": "scenes/scene27.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene28",
+          "label": "→ Scene 28"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene26",
+          "label": "← Scene 26"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene26",
+      "name": "Scene 26",
+      "image": "scenes/scene26.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene27",
+          "label": "→ Scene 27"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene25",
+          "label": "← Scene 25"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene25",
+      "name": "Scene 25",
+      "image": "scenes/scene25.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene26",
+          "label": "→ Scene 26"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene24",
+          "label": "← Scene 24"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene24",
+      "name": "Scene 24",
+      "image": "scenes/scene24.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene25",
+          "label": "→ Scene 25"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene23",
+          "label": "← Scene 23"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene23",
+      "name": "Scene 23",
+      "image": "scenes/scene23.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene24",
+          "label": "→ Scene 24"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene22",
+          "label": "← Scene 22"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene22",
+      "name": "Scene 22",
+      "image": "scenes/scene22.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene23",
+          "label": "→ Scene 23"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene21",
+          "label": "← Scene 21"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene21",
+      "name": "Scene 21",
+      "image": "scenes/scene21.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene22",
+          "label": "→ Scene 22"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene20",
+          "label": "← Scene 20"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene20",
+      "name": "Scene 20",
+      "image": "scenes/scene20.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene21",
+          "label": "→ Scene 21"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene19",
+          "label": "← Scene 19"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene19",
+      "name": "Scene 19",
+      "image": "scenes/scene19.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene20",
+          "label": "→ Scene 20"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene18",
+          "label": "← Scene 18"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene18",
+      "name": "Scene 18",
+      "image": "scenes/scene18.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene19",
+          "label": "→ Scene 19"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene17",
+          "label": "← Scene 17"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene17",
+      "name": "Scene 17",
+      "image": "scenes/scene17.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene18",
+          "label": "→ Scene 18"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene16",
+          "label": "← Scene 16"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene16",
+      "name": "Scene 16",
+      "image": "scenes/scene16.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene17",
+          "label": "→ Scene 17"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene15",
+          "label": "← Scene 15"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene15",
+      "name": "Scene 15",
+      "image": "scenes/scene15.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene16",
+          "label": "→ Scene 16"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene14",
+          "label": "← Scene 14"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene14",
+      "name": "Scene 14",
+      "image": "scenes/scene14.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene15",
+          "label": "→ Scene 15"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene13",
+          "label": "← Scene 13"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene13",
+      "name": "Scene 13",
+      "image": "scenes/scene13.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene14",
+          "label": "→ Scene 14"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene12",
+          "label": "← Scene 12"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene12",
+      "name": "Scene 12",
+      "image": "scenes/scene12.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene13",
+          "label": "→ Scene 13"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene11",
+          "label": "← Scene 11"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene11",
+      "name": "Scene 11",
+      "image": "scenes/scene11.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene12",
+          "label": "→ Scene 12"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene10",
+          "label": "← Scene 10"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene10",
+      "name": "Scene 10",
+      "image": "scenes/scene10.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene11",
+          "label": "→ Scene 11"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene09",
+          "label": "← Scene 9"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene09",
+      "name": "Scene 09",
+      "image": "scenes/scene09.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene10",
+          "label": "→ Scene 10"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene08",
+          "label": "← Scene 8"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene08",
+      "name": "Scene 08",
+      "image": "scenes/scene08.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene09",
+          "label": "→ Scene 9"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene07",
+          "label": "← Scene 7"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene07",
+      "name": "Scene 07",
+      "image": "scenes/scene07.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene08",
+          "label": "→ Scene 8"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene06",
+          "label": "← Scene 6"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene06",
+      "name": "Scene 06",
+      "image": "scenes/scene06.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene07",
+          "label": "→ Scene 7"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene05",
+          "label": "← Scene 5"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene05",
+      "name": "Scene 05",
+      "image": "scenes/scene05.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene06",
+          "label": "→ Scene 6"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene04",
+          "label": "← Scene 4"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene04",
+      "name": "Scene 04",
+      "image": "scenes/scene04.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene05",
+          "label": "→ Scene 5"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene03",
+          "label": "← Scene 3"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene03",
+      "name": "Scene 03",
+      "image": "scenes/scene03.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene04",
+          "label": "→ Scene 4"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene02",
+          "label": "← Scene 2"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene02",
+      "name": "Scene 02",
+      "image": "scenes/scene02.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene03",
+          "label": "→ Scene 3"
+        },
+        {
+          "type": "nav",
+          "yaw": -160,
+          "pitch": -5,
+          "target": "scene01",
+          "label": "← Scene 1"
+        }
+      ],
+      "furniture": [],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": "scene01",
+      "name": "Scene 01",
+      "image": "scenes/scene01.jpg",
+      "initialYaw": 0,
+      "hotspots": [
+        {
+          "type": "nav",
+          "yaw": 20,
+          "pitch": -5,
+          "target": "scene02",
+          "label": "→ Scene 2"
+        }
+      ],
+      "furniture": [
+        {
+          "type": "callCenterCluster",
+          "rows": 2,
+          "cols": 3,
+          "position": [
+            0,
+            -120,
+            -250
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "mapPos": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  ]
+}
